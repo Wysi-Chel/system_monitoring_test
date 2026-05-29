@@ -50,8 +50,8 @@ $navItems = [
     <section class="sidebar-panel">
         <div class="sidebar-panel-label">Company Workspace</div>
         <div class="company-switch" aria-label="Switch company">
-            <a href="<?= e($mitsubishiUrl) ?>" class="switch-link<?= $company["key"] === "mitsubishi" ? " active" : "" ?>">Mitsubishi</a>
-            <a href="<?= e($hyundaiUrl) ?>" class="switch-link<?= $company["key"] === "hyundai" ? " active" : "" ?>">Hyundai</a>
+            <a href="<?= e($mitsubishiUrl) ?>" class="switch-link<?= $company["key"] === "mitsubishi" ? " active" : "" ?>"<?= $company["key"] === "mitsubishi" ? ' aria-current="page"' : "" ?>>Mitsubishi</a>
+            <a href="<?= e($hyundaiUrl) ?>" class="switch-link<?= $company["key"] === "hyundai" ? " active" : "" ?>"<?= $company["key"] === "hyundai" ? ' aria-current="page"' : "" ?>>Hyundai</a>
         </div>
     </section>
     <?php endif; ?>
@@ -80,10 +80,7 @@ $navItems = [
     </section>
 
     <div class="sidebar-footer">
-        <div class="sidebar-note">
-            <span>Server</span>
-            <strong><?= e($appEnvironmentLabel) ?></strong>
-        </div>
+       
         <div class="sidebar-note">
             <span>Today</span>
             <strong><?= e($todayDisplay) ?></strong>

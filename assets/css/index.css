@@ -384,7 +384,7 @@ header p {
 }
 
 .switch-link.active {
-
+    color:#111111;
     border-color: rgba(255, 255, 255, 0.82);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 0 0 2px rgba(255, 255, 255, 0.14);
 }
@@ -2258,11 +2258,19 @@ body.page-ticket-monitoring .app-sidebar {
     max-height: calc(100vh - 44px);
     padding: 24px 22px;
     overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     border: 1px solid var(--border);
     border-radius: 28px;
     background: linear-gradient(180deg, var(--surface-strong), var(--surface));
     box-shadow: var(--shell-shadow);
     backdrop-filter: blur(16px);
+}
+
+body.page-system-monitoring .app-sidebar::-webkit-scrollbar,
+body.page-ticket-monitoring .app-sidebar::-webkit-scrollbar {
+    width: 0;
+    height: 0;
 }
 
 body.page-system-monitoring .app-topbar,
@@ -2444,6 +2452,7 @@ body.page-ticket-monitoring .company-switch {
 body.page-system-monitoring .switch-link,
 body.page-ticket-monitoring .switch-link {
     display: inline-flex;
+    position: relative;
     justify-content: center;
     align-items: center;
     width: 100%;
@@ -2458,23 +2467,40 @@ body.page-ticket-monitoring .switch-link {
     letter-spacing: 0.08em;
     text-decoration: none;
     box-shadow: none;
+    transition: transform 0.18s ease, background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, color 0.18s ease;
 }
 
-body.page-system-monitoring .company-switch .switch-link:first-child,
-body.page-system-monitoring .company-switch .switch-link:last-child,
-body.page-ticket-monitoring .company-switch .switch-link:first-child,
-body.page-ticket-monitoring .company-switch .switch-link:last-child {
+body.page-system-monitoring .company-switch .switch-link:first-child:not(.active):not([aria-current="page"]),
+body.page-system-monitoring .company-switch .switch-link:last-child:not(.active):not([aria-current="page"]),
+body.page-ticket-monitoring .company-switch .switch-link:first-child:not(.active):not([aria-current="page"]),
+body.page-ticket-monitoring .company-switch .switch-link:last-child:not(.active):not([aria-current="page"]) {
     background: rgba(255, 255, 255, 0.05);
 }
 
-body.page-system-monitoring .switch-link.active,
-body.page-ticket-monitoring .switch-link.active,
 body.page-system-monitoring .switch-link:hover,
 body.page-ticket-monitoring .switch-link:hover {
+    border-color: var(--border);
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+body.page-system-monitoring .company-switch .switch-link.active,
+body.page-system-monitoring .company-switch .switch-link[aria-current="page"],
+body.page-ticket-monitoring .company-switch .switch-link.active,
+body.page-ticket-monitoring .company-switch .switch-link[aria-current="page"] {
     border-color: transparent;
     background: var(--brand-gradient);
-    color: #252322;
-    box-shadow: none;
+    color: #fff8f6;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+body.page-system-monitoring .company-switch .switch-link.active:hover,
+body.page-system-monitoring .company-switch .switch-link[aria-current="page"]:hover,
+body.page-ticket-monitoring .company-switch .switch-link.active:hover,
+body.page-ticket-monitoring .company-switch .switch-link[aria-current="page"]:hover {
+    border-color: transparent;
+    background: var(--brand-gradient);
+    color: #fff8f6;
 }
 
 body.page-system-monitoring .sidebar-footer,
