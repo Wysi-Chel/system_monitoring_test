@@ -207,7 +207,7 @@ $renderDashboardBreakdown = static function (array $items, string $emptyMessage)
                         <?php endif; ?>
 
                         <div class="dashboard-activity-title"><?= e(uppercaseText($activityTitle)) ?></div>
-                        <div class="dashboard-activity-meta"><?= e(implode(" • ", $metaParts)) ?></div>
+                        <div class="dashboard-activity-meta"><?= e(implode(" / ", $metaParts)) ?></div>
                     </div>
 
                     <div class="dashboard-activity-tags">
