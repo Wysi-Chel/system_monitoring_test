@@ -180,7 +180,7 @@ $formatCardValue = static function (string $value): string {
                             title="Choose Action"
                             onchange="if (this.value !== '') { this.form.submit(); }"
                         >
-                            <option value="" selected>&#9998;</option>
+                            <option value="" selected disabled>Action</option>
                             <?php foreach ($rowActionOptions as $option): ?>
                             <option value="<?= e($option) ?>"><?= e($option) ?></option>
                             <?php endforeach; ?>
