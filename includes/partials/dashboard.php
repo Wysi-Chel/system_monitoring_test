@@ -1,7 +1,13 @@
 <?php
 $dashboardMetrics = $dashboardData["metrics"] ?? [];
 $recentDashboardRecords = $dashboardData["recent_records"] ?? [];
+$dashboardDataCorrectionUrl = buildUrl("index.php", $listQueryParams, [
+    "data_correction" => 1,
+    "escalation" => null,
+    "page" => 1,
+]) . "#summary-section";
 $dashboardEscalationUrl = buildUrl("index.php", $listQueryParams, [
+    "data_correction" => null,
     "escalation" => 1,
     "page" => 1,
 ]) . "#summary-section";
@@ -54,10 +60,10 @@ $renderDashboardBreakdown = static function (array $items, string $emptyMessage)
             <div class="dashboard-metric-value"><?= e(number_format((int) ($dashboardMetrics["total_records"] ?? 0))) ?></div>
         </article>
 
-        <article class="dashboard-metric-card">
+        <a href="<?= e($dashboardDataCorrectionUrl) ?>" class="dashboard-metric-card dashboard-metric-link">
             <div class="dashboard-metric-label">Data Correction</div>
             <div class="dashboard-metric-value"><?= e(number_format((int) ($dashboardMetrics["data_correction_records"] ?? 0))) ?></div>
-        </article>
+        </a>
 
         <a href="<?= e($dashboardEscalationUrl) ?>" class="dashboard-metric-card dashboard-metric-link">
             <div class="dashboard-metric-label">Escalation Candidates</div>

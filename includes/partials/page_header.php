@@ -44,13 +44,7 @@ $navItems = [
 ];
 ?>
 <aside class="app-sidebar">
-    <div class="brand-block">
-        <div class="brand-mark"><?= e(strtoupper(substr($company["company_name"], 0, 2))) ?></div>
-        <div>
-            <div class="brand-kicker">System Monitoring</div>
-            <h2 class="brand-title"><?= e($company["system_name"]) ?></h2>
-        </div>
-    </div>
+
 
     <?php if ($showCompanySwitch): ?>
     <section class="sidebar-panel">

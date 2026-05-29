@@ -91,6 +91,7 @@ function buildMonitoringFilters(array $input, array $company, array $filterOptio
         "department" => "",
         "module" => "",
         "status" => normalizeAllowedFilter($input["status"] ?? "", $filterOptions["status"] ?? []),
+        "data_correction_only" => normalizeBooleanFilter($input["data_correction"] ?? ""),
         "escalation_only" => normalizeBooleanFilter($input["escalation"] ?? ""),
         "page" => normalizePositiveInt($input["page"] ?? 1, 1),
         "per_page" => normalizePositiveInt($input["per_page"] ?? $defaultPerPage, $defaultPerPage),
@@ -221,6 +222,11 @@ function buildMonitoringWhereClause(array $filters, array &$bindings): string
     if ($filters["status"] !== "") {
         $conditions[] = "CONCAT(',', REPLACE(COALESCE(status, ''), ', ', ','), ',') LIKE :status ESCAPE '\\\\'";
         $bindings["status"] = "%," . escapeLikeTerm($filters["status"]) . ",%";
+    }
+
+    if (!empty($filters["data_correction_only"])) {
+        $conditions[] = "UPPER(CONCAT(',', REPLACE(COALESCE(processed_type, ''), ', ', ','), ',')) LIKE :data_correction ESCAPE '\\\\'";
+        $bindings["data_correction"] = "%," . strtoupper(escapeLikeTerm("Data Correction")) . ",%";
     }
 
     return $conditions === [] ? "" : " WHERE " . implode(" AND ", $conditions);

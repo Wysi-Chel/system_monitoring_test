@@ -232,72 +232,123 @@ $ticketFormDefaults = [
         </div>
         <?php endif; ?>
 
-        <div class="table-wrapper compact-summary-table-wrapper">
-            <table class="compact-summary-table">
-                <thead>
-                    <tr>
-                        <?php foreach ($ticketMonitoringColumns as $column): ?>
-                        <th class="<?= $column["key"] === "ticket_status" ? "status-column-header" : "" ?>"><?= e($column["label"]) ?></th>
-                        <?php endforeach; ?>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if ($records === []): ?>
-                        <tr>
-                            <td colspan="<?= e(count($ticketMonitoringColumns) + 1) ?>" class="empty-table">No ticket records matched the current filters.</td>
-                        </tr>
-                    <?php else: ?>
-                        <?php foreach ($records as $row): ?>
-                            <tr class="<?= isLockedTicketStatus($row["ticket_status"] ?? "") ? "ticket-row-resolved" : "" ?>">
-                                <?php foreach ($ticketMonitoringColumns as $column): ?>
-                                <?php if ($column["key"] === "ticket_status"): ?>
-                                <?php
-                                    $statusValue = formatSummaryValue($column, $row);
-                                    $statusClass = preg_replace('/[^a-z0-9]+/i', '-', strtolower($statusValue)) ?: 'unknown';
-                                ?>
-                                <td class="status-column-cell">
-                                    <span class="status-pill status-pill-<?= e($statusClass) ?>"><?= e($statusValue) ?></span>
-                                </td>
-                                <?php else: ?>
-                                <td><?= e(formatSummaryValue($column, $row)) ?></td>
-                                <?php endif; ?>
+        <?php if ($records === []): ?>
+        <div class="summary-card-empty">No ticket records matched the current filters.</div>
+        <?php else: ?>
+        <div class="summary-card-list">
+            <?php foreach ($records as $row): ?>
+                <?php
+                $ticketNumber = trim((string) formatSummaryValue(["key" => "ticket_number", "format" => "text"], $row));
+                $description = trim((string) formatSummaryValue(["key" => "ticket_description", "format" => "text"], $row));
+                $statusValue = trim((string) formatSummaryValue(["key" => "ticket_status", "format" => "text"], $row));
+                $statusClass = preg_replace('/[^a-z0-9]+/i', '-', strtolower($statusValue)) ?: 'unknown';
+                $dateCreatedValue = trim((string) formatSummaryValue(["key" => "date_created", "format" => "date"], $row));
+                $createdByValue = trim((string) formatSummaryValue(["key" => "created_by", "format" => "text"], $row));
+                $moduleValue = trim((string) formatSummaryValue(["key" => "module", "format" => "text"], $row));
+                $dealerValue = trim((string) formatSummaryValue(["key" => "dealer", "format" => "text"], $row));
+                $branchValue = trim((string) formatSummaryValue(["key" => "branch", "format" => "text"], $row));
+                $metaParts = array_filter([
+                    $dateCreatedValue,
+                    $moduleValue,
+                    $dealerValue,
+                    $branchValue,
+                    $createdByValue,
+                ]);
+                $ticketAgeValue = trim((string) formatSummaryValue(["key" => "ticket_age", "format" => "ticket_age"], $row));
+                $resolvedValue = trim((string) formatSummaryValue(["key" => "resolved_at", "format" => "date"], $row));
+                $encodedAtValue = trim((string) formatSummaryValue(["key" => "created_at", "format" => "timestamp"], $row));
+                ?>
+            <article class="summary-card summary-card-ticket<?= isLockedTicketStatus($row["ticket_status"] ?? "") ? " summary-card-locked" : "" ?>">
+                <div class="summary-card-header">
+                    <div class="summary-card-main">
+                        <span class="dashboard-activity-id"><?= e($ticketNumber !== "" ? $ticketNumber : "NO TICKET") ?></span>
+                        <div class="dashboard-activity-title"><?= e($description !== "" ? $description : "NO DESCRIPTION PROVIDED") ?></div>
+                        <?php if ($metaParts !== []): ?>
+                        <div class="dashboard-activity-meta"><?= e(implode(" / ", $metaParts)) ?></div>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="summary-card-action">
+                        <span class="status-pill status-pill-<?= e($statusClass) ?>"><?= e($statusValue !== "" ? $statusValue : "Unknown") ?></span>
+                        <?php if (!isLockedTicketStatus($row["ticket_status"] ?? "")): ?>
+                        <form action="update_ticket_status.php" method="POST" class="ticket-status-form">
+                            <input type="hidden" name="company" value="<?= e($company["key"]) ?>">
+                            <input type="hidden" name="ticket_id" value="<?= e($row["id"] ?? "") ?>">
+                            <input type="hidden" name="filter_search" value="<?= e($filters["search"]) ?>">
+                            <input type="hidden" name="filter_branch" value="<?= e($filters["branch"]) ?>">
+                            <input type="hidden" name="filter_dealer" value="<?= e($filters["dealer"] ?? "") ?>">
+                            <input type="hidden" name="filter_status" value="<?= e($filters["ticket_status"]) ?>">
+                            <input type="hidden" name="filter_per_page" value="<?= e($filters["per_page"]) ?>">
+                            <input type="hidden" name="filter_page" value="<?= e($pagination["page"]) ?>">
+                            <select
+                                name="new_ticket_status"
+                                class="ticket-status-select"
+                                aria-label="Edit ticket status"
+                                title="Edit Status"
+                                onchange="if (this.value !== '') { this.form.submit(); }"
+                            >
+                                <option value="" selected>&#9998;</option>
+                                <?php foreach ($ticketStatusOptions as $option): ?>
+                                    <?php if (($row["ticket_status"] ?? "") === $option) { continue; } ?>
+                                <option value="<?= e($option) ?>"><?= e($option) ?></option>
                                 <?php endforeach; ?>
-                                <td class="table-action-cell">
-                                    <?php if (isLockedTicketStatus($row["ticket_status"] ?? "")): ?>
-                                        
-                                    <?php else: ?>
-                                        <form action="update_ticket_status.php" method="POST" class="ticket-status-form">
-                                            <input type="hidden" name="company" value="<?= e($company["key"]) ?>">
-                                            <input type="hidden" name="ticket_id" value="<?= e($row["id"] ?? "") ?>">
-                                            <input type="hidden" name="filter_search" value="<?= e($filters["search"]) ?>">
-                                            <input type="hidden" name="filter_branch" value="<?= e($filters["branch"]) ?>">
-                                            <input type="hidden" name="filter_dealer" value="<?= e($filters["dealer"] ?? "") ?>">
-                                            <input type="hidden" name="filter_status" value="<?= e($filters["ticket_status"]) ?>">
-                                            <input type="hidden" name="filter_per_page" value="<?= e($filters["per_page"]) ?>">
-                                            <input type="hidden" name="filter_page" value="<?= e($pagination["page"]) ?>">
-                                            <select
-                                                name="new_ticket_status"
-                                                class="ticket-status-select"
-                                                aria-label="Edit ticket status"
-                                                title="Edit Status"
-                                                onchange="if (this.value !== '') { this.form.submit(); }"
-                                            >
-                                                <option value="" selected>&#9998;</option>
-                                                <?php foreach ($ticketStatusOptions as $option): ?>
-                                                    <?php if (($row["ticket_status"] ?? "") === $option) { continue; } ?>
-                                                <option value="<?= e($option) ?>"><?= e($option) ?></option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                        </form>
-                                    <?php endif; ?>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
+                            </select>
+                        </form>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div class="summary-card-tags">
+                    <?php if ($ticketAgeValue !== ""): ?>
+                    <span class="dashboard-chip"><?= e(uppercaseText($ticketAgeValue)) ?></span>
                     <?php endif; ?>
-                </tbody>
-            </table>
+                    <?php if ($resolvedValue !== ""): ?>
+                    <span class="dashboard-chip ticket">RESOLVED <?= e(uppercaseText($resolvedValue)) ?></span>
+                    <?php endif; ?>
+                </div>
+
+                    <div class="summary-card-grid">
+                        <div class="summary-card-field">
+                            <div class="summary-card-label">Date Created</div>
+                            <div class="summary-card-value"><?= e($dateCreatedValue !== "" ? $dateCreatedValue : "N/A") ?></div>
+                        </div>
+                        <div class="summary-card-field">
+                            <div class="summary-card-label">Created By</div>
+                            <div class="summary-card-value"><?= e($createdByValue !== "" ? $createdByValue : "N/A") ?></div>
+                        </div>
+                        <div class="summary-card-field">
+                            <div class="summary-card-label">Module</div>
+                            <div class="summary-card-value"><?= e($moduleValue !== "" ? $moduleValue : "N/A") ?></div>
+                        </div>
+                        <div class="summary-card-field">
+                            <div class="summary-card-label">Dealer</div>
+                            <div class="summary-card-value"><?= e($dealerValue !== "" ? $dealerValue : "N/A") ?></div>
+                        </div>
+                        <div class="summary-card-field">
+                            <div class="summary-card-label">Branch</div>
+                            <div class="summary-card-value"><?= e($branchValue !== "" ? $branchValue : "N/A") ?></div>
+                        </div>
+                    <div class="summary-card-field">
+                        <div class="summary-card-label">Ticket Age</div>
+                        <div class="summary-card-value"><?= e($ticketAgeValue !== "" ? $ticketAgeValue : "N/A") ?></div>
+                    </div>
+                    <div class="summary-card-field">
+                        <div class="summary-card-label">Date Resolved</div>
+                        <div class="summary-card-value"><?= e($resolvedValue !== "" ? $resolvedValue : "N/A") ?></div>
+                    </div>
+                    <div class="summary-card-field">
+                        <div class="summary-card-label">Encoded At</div>
+                        <div class="summary-card-value"><?= e($encodedAtValue !== "" ? $encodedAtValue : "N/A") ?></div>
+                    </div>
+                    <div class="summary-card-field summary-card-field-full">
+                        <div class="summary-card-label">Description</div>
+                        <div class="summary-card-value summary-card-value-multiline"><?= e($description !== "" ? $description : "N/A") ?></div>
+                    </div>
+                </div>
+            </article>
+            <?php endforeach; ?>
         </div>
+        <?php endif; ?>
 
         <?php if ($pagination["total_pages"] > 1): ?>
         <nav class="pagination" aria-label="Ticket monitoring pages">

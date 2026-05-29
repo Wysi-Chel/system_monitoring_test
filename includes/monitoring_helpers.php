@@ -132,6 +132,10 @@ function buildMonitoringListQueryParams(string $companyKey, array $filters, bool
         $params["per_page"] = $filters["per_page"];
     }
 
+    if (!empty($filters["data_correction_only"])) {
+        $params["data_correction"] = 1;
+    }
+
     if (!empty($filters["escalation_only"])) {
         $params["escalation"] = 1;
     }
@@ -373,6 +377,10 @@ function buildActiveFilterBadges(array $filters, ?string $fixedBranch = null): a
 
     if ($filters["status"] !== "") {
         $badges[] = "Status: " . $filters["status"];
+    }
+
+    if (!empty($filters["data_correction_only"])) {
+        $badges[] = "Processed Type: Data Correction";
     }
 
     if (!empty($filters["escalation_only"])) {

@@ -22,6 +22,7 @@ $filterBranch = trim((string) ($_POST["filter_branch"] ?? ""));
 $filterDealer = trim((string) ($_POST["filter_dealer"] ?? ""));
 $filterIdentificationNumber = trim((string) ($_POST["filter_identification_number"] ?? ""));
 $filterStatus = trim((string) ($_POST["filter_status"] ?? ""));
+$filterDataCorrection = trim((string) ($_POST["filter_data_correction"] ?? ""));
 $filterEscalation = trim((string) ($_POST["filter_escalation"] ?? ""));
 $filterPage = trim((string) ($_POST["filter_page"] ?? ""));
 
@@ -43,6 +44,10 @@ if ($filterIdentificationNumber !== "") {
 
 if ($filterStatus !== "") {
     $redirectParams["status"] = $filterStatus;
+}
+
+if ($filterDataCorrection === "1") {
+    $redirectParams["data_correction"] = 1;
 }
 
 if ($filterEscalation === "1") {

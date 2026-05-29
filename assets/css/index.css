@@ -384,6 +384,7 @@ header p {
 }
 
 .switch-link.active {
+
     border-color: rgba(255, 255, 255, 0.82);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 0 0 2px rgba(255, 255, 255, 0.14);
 }
@@ -1111,6 +1112,181 @@ button,
     color: var(--brand-dark);
 }
 
+.summary-card-list {
+    display: grid;
+    gap: 8px;
+}
+
+.summary-card-empty {
+    padding: 26px;
+    border: 1px dashed var(--border-strong);
+    border-radius: 20px;
+    text-align: center;
+    color: var(--text-soft);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.summary-card {
+    position: relative;
+    display: grid;
+    gap: 6px;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.02));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+    transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.summary-card:hover {
+    transform: translateY(-1px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.summary-card-alert {
+    border-color: #c49a38;
+    background: linear-gradient(180deg, rgba(196, 154, 56, 0.12), rgba(255, 255, 255, 0.03));
+}
+
+.summary-card-locked {
+    background: linear-gradient(180deg, rgba(141, 176, 255, 0.09), rgba(255, 255, 255, 0.02));
+}
+
+.summary-card-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.summary-card-main {
+    min-width: 0;
+    display: grid;
+    gap: 2px;
+}
+
+.summary-card-action {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.summary-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+}
+
+.summary-card-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(110px, 1fr));
+    gap: 5px;
+    grid-auto-flow: dense;
+}
+
+.summary-card-monitoring .summary-card-grid {
+    grid-template-columns: repeat(5, minmax(105px, 1fr));
+}
+
+.summary-card-field {
+    min-width: 0;
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 7px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.summary-card-field-full {
+    grid-column: 1 / -1;
+}
+
+.summary-card-monitoring .summary-card-field-reason {
+    grid-column: 2 / -1;
+}
+
+.summary-card-label {
+    margin-bottom: 3px;
+    color: var(--text-soft);
+    font-size: 8px;
+    font-weight: bold;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.summary-card-value {
+    color: var(--text);
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.25;
+    word-break: break-word;
+}
+
+.summary-card-value-multiline {
+    white-space: normal;
+}
+
+.summary-card-monitoring .dashboard-activity-id,
+.summary-card-ticket .dashboard-activity-id {
+    margin-bottom: 1px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+}
+
+.summary-card-monitoring .dashboard-activity-title,
+.summary-card-ticket .dashboard-activity-title {
+    font-size: 15px;
+    line-height: 1.1;
+}
+
+.summary-card-monitoring .dashboard-activity-meta,
+.summary-card-ticket .dashboard-activity-meta {
+    margin-top: 1px;
+    font-size: 10px;
+    line-height: 1.25;
+}
+
+.summary-card-monitoring .dashboard-chip,
+.summary-card-ticket .dashboard-chip {
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-size: 8px;
+    letter-spacing: 0.08em;
+}
+
+.summary-card-monitoring .monitoring-action-form,
+.summary-card-ticket .ticket-status-form {
+    margin: 0;
+    display: flex;
+}
+
+.summary-card-monitoring .summary-action-select,
+.summary-card-ticket .ticket-status-select {
+    width: 36px;
+    min-width: 36px;
+    max-width: 36px;
+    min-height: 36px;
+    padding: 5px 22px 5px 8px;
+    border-radius: 10px;
+}
+
+.summary-card-monitoring .summary-action-select:focus,
+.summary-card-ticket .ticket-status-select:focus {
+    width: 124px;
+    min-width: 124px;
+    max-width: 124px;
+}
+
+.summary-card-ticket .status-pill {
+    min-width: 68px;
+    padding: 3px 7px;
+    font-size: 10px;
+}
+
 #summary-section,
 #ticket-summary {
     text-transform: uppercase;
@@ -1717,6 +1893,10 @@ html.dark-theme .status-pill-closed {
         grid-column: auto;
     }
 
+    .summary-card-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .field-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -1741,6 +1921,10 @@ html.dark-theme .status-pill-closed {
         flex-direction: column;
     }
 
+    .summary-card-header {
+        grid-template-columns: 1fr;
+    }
+
     .dashboard-hero {
         padding: 18px;
     }
@@ -1750,8 +1934,17 @@ html.dark-theme .status-pill-closed {
     }
 
     .dashboard-hero-actions,
-    .dashboard-activity-tags {
+    .dashboard-activity-tags,
+    .summary-card-action {
         justify-content: flex-start;
+    }
+
+    .summary-card-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .summary-card-monitoring .summary-card-field-reason {
+        grid-column: 1 / -1;
     }
 
     .dashboard-ticket-metric strong,
@@ -2127,6 +2320,8 @@ body.page-system-monitoring .dashboard-ticket-metric,
 body.page-ticket-monitoring .dashboard-ticket-metric,
 body.page-system-monitoring .record-image-panel,
 body.page-ticket-monitoring .record-image-panel,
+body.page-system-monitoring .summary-card,
+body.page-ticket-monitoring .summary-card,
 body.page-system-monitoring .table-wrapper,
 body.page-ticket-monitoring .table-wrapper,
 body.page-system-monitoring .modal-window,
@@ -2239,10 +2434,11 @@ body.page-ticket-monitoring .sidebar-link.active {
 body.page-system-monitoring .company-switch,
 body.page-ticket-monitoring .company-switch {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
     gap: 8px;
     padding: 0;
     background: transparent;
+    width: 100%;
 }
 
 body.page-system-monitoring .switch-link,
@@ -2250,12 +2446,16 @@ body.page-ticket-monitoring .switch-link {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    padding: 11px 12px;
-    border: 1px solid var(--border);
-    background: rgba(255, 255, 255, 0.03);
-    color: var(--text-soft);
+    width: 100%;
+    min-height: 52px;
+    padding: 12px 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text);
     font-size: 0.88rem;
     font-weight: 700;
+    letter-spacing: 0.08em;
     text-decoration: none;
     box-shadow: none;
 }
@@ -2264,7 +2464,7 @@ body.page-system-monitoring .company-switch .switch-link:first-child,
 body.page-system-monitoring .company-switch .switch-link:last-child,
 body.page-ticket-monitoring .company-switch .switch-link:first-child,
 body.page-ticket-monitoring .company-switch .switch-link:last-child {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 body.page-system-monitoring .switch-link.active,
@@ -2273,7 +2473,7 @@ body.page-system-monitoring .switch-link:hover,
 body.page-ticket-monitoring .switch-link:hover {
     border-color: transparent;
     background: var(--brand-gradient);
-    color: #fff8f6;
+    color: #252322;
     box-shadow: none;
 }
 
@@ -2446,12 +2646,19 @@ body.page-system-monitoring .table-wrapper,
 body.page-ticket-monitoring .table-wrapper,
 body.page-system-monitoring .record-image-panel,
 body.page-ticket-monitoring .record-image-panel,
+body.page-system-monitoring .summary-card,
+body.page-ticket-monitoring .summary-card,
 body.page-system-monitoring .form-section,
 body.page-ticket-monitoring .form-section,
 body.page-system-monitoring .modal-window,
 body.page-ticket-monitoring .modal-window {
     border-radius: 20px;
     background: rgba(255, 255, 255, 0.03);
+}
+
+body.page-system-monitoring .summary-card,
+body.page-ticket-monitoring .summary-card {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.025));
 }
 
 body.page-system-monitoring .summary-header,
@@ -2800,6 +3007,11 @@ body.page-ticket-monitoring .header-kicker-row {
     body.page-ticket-monitoring .brand-block,
     body.page-ticket-monitoring .card {
         padding: 18px;
+    }
+
+    body.page-system-monitoring .summary-card,
+    body.page-ticket-monitoring .summary-card {
+        padding: 10px;
     }
 
     body.page-system-monitoring .app-topbar,

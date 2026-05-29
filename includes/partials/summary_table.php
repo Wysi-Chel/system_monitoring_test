@@ -1,7 +1,13 @@
-<?php $paginationPages = buildPaginationPages($pagination["page"], $pagination["total_pages"]); ?>
-<?php $summaryAnchor = "#summary-section"; ?>
-<?php $monitoringActionOptions = getMonitoringActionOptions(); ?>
-<?php $monitoringDoneStatus = getMonitoringDoneStatus(); ?>
+<?php
+$paginationPages = buildPaginationPages($pagination["page"], $pagination["total_pages"]);
+$summaryAnchor = "#summary-section";
+$monitoringActionOptions = getMonitoringActionOptions();
+$monitoringDoneStatus = getMonitoringDoneStatus();
+$formatCardValue = static function (string $value): string {
+    $value = trim($value);
+    return $value !== "" ? $value : "N/A";
+};
+?>
 <section class="card" id="summary-section">
     <div class="summary-header">
         <div>
@@ -12,6 +18,9 @@
 
     <form action="index.php#summary-section" method="GET" class="summary-filter-form">
         <input type="hidden" name="company" value="<?= e($company["key"]) ?>">
+        <?php if (!empty($filters["data_correction_only"])): ?>
+        <input type="hidden" name="data_correction" value="1">
+        <?php endif; ?>
         <?php if (!empty($filters["escalation_only"])): ?>
         <input type="hidden" name="escalation" value="1">
         <?php endif; ?>
@@ -76,7 +85,7 @@
                 <strong><?= e($pagination["start_item"]) ?>-<?= e($pagination["end_item"]) ?></strong> of <strong><?= e($totalRecords) ?></strong> records
             </div>
         </div>
-        <br>    
+        <br>
     </form>
 
     <?php if ($activeFilterBadges !== []): ?>
@@ -87,114 +96,156 @@
     </div>
     <?php endif; ?>
 
-    <div class="table-wrapper">
-        <table class="monitoring-summary-table compact-summary-table">
-            <thead>
-                <tr>
-                    <?php foreach ($summaryColumns as $column): ?>
-                    <th><?= e($column["label"]) ?></th>
-                    <?php endforeach; ?>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if ($records === []): ?>
-                    <tr>
-                        <td colspan="<?= e(count($summaryColumns)) ?>" class="empty-table">No records matched the current filters.</td>
-                    </tr>
-                <?php else: ?>
-                    <?php foreach ($records as $row): ?>
-                        <?php
-                            $formattedDisciplinaryAction = trim((string) formatSummaryValue(
-                                ["key" => "disciplinary_action", "format" => "text"],
-                                $row
-                            ));
-                        ?>
-                        <tr class="<?= ((int) ($row["data_correction_offense_count"] ?? 0)) >= 3 ? "summary-row-alert" : "" ?>">
-                            <?php foreach ($summaryColumns as $column): ?>
-                            <?php if (($column["format"] ?? "text") === "action_control"): ?>
-                            <?php
-                                $rowActionOptions = [];
+    <?php if ($records === []): ?>
+    <div class="summary-card-empty">No records matched the current filters.</div>
+    <?php else: ?>
+    <div class="summary-card-list">
+        <?php foreach ($records as $row): ?>
+            <?php
+            $formattedDisciplinaryAction = trim((string) formatSummaryValue(
+                ["key" => "disciplinary_action", "format" => "text"],
+                $row
+            ));
+            $identificationNumber = trim((string) ($row["identification_number"] ?? ""));
+            $recordUrl = $identificationNumber !== ""
+                ? buildUrl("monitoring_record.php", $listQueryParams, ["identification_number" => $identificationNumber])
+                : "";
+            $titleValue = trim((string) formatSummaryValue(["key" => "user_name", "format" => "text"], $row));
+            if ($titleValue === "") {
+                $titleValue = trim((string) formatSummaryValue(["key" => "client_name", "format" => "text"], $row));
+            }
+            if ($titleValue === "") {
+                $titleValue = $identificationNumber !== "" ? $identificationNumber : "UNASSIGNED";
+            }
+            $metaParts = array_filter([
+                formatDisplayDate((string) ($row["date_recorded"] ?? "")),
+                formatDisplayDate((string) ($row["transaction_date"] ?? "")),
+                trim((string) formatSummaryValue(["key" => "module", "format" => "text"], $row)),
+                trim((string) formatSummaryValue(["key" => "dealer", "format" => "text"], $row)),
+                trim((string) formatSummaryValue(["key" => "branch", "format" => "text"], $row)),
+            ]);
+            $statusTags = splitMultiValueText((string) ($row["status"] ?? ""));
+            $processedTypeTags = splitMultiValueText((string) ($row["processed_type"] ?? ""));
+            $classificationValue = trim((string) formatSummaryValue(["key" => "classification", "format" => "text"], $row));
+            $ticketValue = trim((string) formatSummaryValue(["key" => "ticket", "format" => "text"], $row));
+            $offenseValue = $formattedDisciplinaryAction !== ""
+                ? $formattedDisciplinaryAction
+                : trim((string) formatSummaryValue(["key" => "offense", "format" => "text"], $row));
+            $rowActionOptions = [];
 
-                                if (canMarkMonitoringRecordDone($row["status"] ?? "")) {
-                                    $rowActionOptions[] = $monitoringDoneStatus;
-                                }
+            if (canMarkMonitoringRecordDone($row["status"] ?? "")) {
+                $rowActionOptions[] = $monitoringDoneStatus;
+            }
 
-                                if (((int) ($row["data_correction_offense_count"] ?? 0)) >= 3) {
-                                    foreach ($monitoringActionOptions as $option) {
-                                        if (!in_array($option, $rowActionOptions, true)) {
-                                            $rowActionOptions[] = $option;
-                                        }
-                                    }
-                                }
-                            ?>
-                            <td class="summary-discipline-cell summary-action-cell">
-                                <div class="summary-action-content">
-                                <?php if ($rowActionOptions !== []): ?>
-                                <form action="update_monitoring_action.php" method="POST" class="monitoring-action-form">
-                                    <input type="hidden" name="company" value="<?= e($company["key"]) ?>">
-                                    <input type="hidden" name="record_id" value="<?= e($row["id"] ?? "") ?>">
-                                    <input type="hidden" name="filter_month" value="<?= e($filters["month"] ?? "") ?>">
-                                    <input type="hidden" name="filter_branch" value="<?= e($filters["branch"] ?? "") ?>">
-                                    <input type="hidden" name="filter_dealer" value="<?= e($filters["dealer"] ?? "") ?>">
-                                    <input type="hidden" name="filter_identification_number" value="<?= e($filters["identification_number"] ?? "") ?>">
-                                    <input type="hidden" name="filter_status" value="<?= e($filters["status"] ?? "") ?>">
-                                    <input type="hidden" name="filter_escalation" value="<?= !empty($filters["escalation_only"]) ? "1" : "" ?>">
-                                    <input type="hidden" name="filter_page" value="<?= e($pagination["page"]) ?>">
-                                    <select
-                                        name="disciplinary_action"
-                                        class="summary-action-select"
-                                        aria-label="Choose disciplinary action"
-                                        title="Choose Action"
-                                        onchange="if (this.value !== '') { this.form.submit(); }"
-                                    >
-                                        <option value="" selected>&#9998;</option>
-                                        <?php foreach ($rowActionOptions as $option): ?>
-                                        <option value="<?= e($option) ?>"><?= e($option) ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </form>
-                                <?php else: ?>
-                                <span class="summary-action-placeholder" aria-hidden="true"></span>
-                                <?php endif; ?>
-                                </div>
-                            </td>
-                            <?php elseif (($column["format"] ?? "text") === "record_link"): ?>
-                            <?php
-                                $identificationNumber = trim((string) ($row["identification_number"] ?? ""));
-                                $recordUrl = $identificationNumber !== ""
-                                    ? buildUrl("monitoring_record.php", $listQueryParams, ["identification_number" => $identificationNumber])
-                                    : "";
-                            ?>
-                            <td>
-                                <?php if ($recordUrl !== ""): ?>
-                                <a href="<?= e($recordUrl) ?>" class="record-link"><?= e(formatSummaryValue($column, $row)) ?></a>
-                                <?php else: ?>
-                                <?= e(formatSummaryValue($column, $row)) ?>
-                                <?php endif; ?>
-                            </td>
-                            <?php else: ?>
-                            <?php
-                                $cellValue = formatSummaryValue($column, $row);
-                                $cellClass = in_array($column["key"], ["data_correction_alert", "disciplinary_action"], true)
-                                    ? "summary-discipline-cell"
-                                    : "";
+            if (((int) ($row["data_correction_offense_count"] ?? 0)) >= 3) {
+                foreach ($monitoringActionOptions as $option) {
+                    if (!in_array($option, $rowActionOptions, true)) {
+                        $rowActionOptions[] = $option;
+                    }
+                }
+            }
+            ?>
+        <article class="summary-card summary-card-monitoring<?= ((int) ($row["data_correction_offense_count"] ?? 0)) >= 3 ? " summary-card-alert" : "" ?>">
+            <div class="summary-card-header">
+                <div class="summary-card-main">
+                    <?php if ($recordUrl !== ""): ?>
+                    <a href="<?= e($recordUrl) ?>" class="dashboard-activity-id"><?= e($identificationNumber !== "" ? $identificationNumber : "NO ID") ?></a>
+                    <?php else: ?>
+                    <span class="dashboard-activity-id"><?= e($identificationNumber !== "" ? $identificationNumber : "NO ID") ?></span>
+                    <?php endif; ?>
 
-                                if ($column["key"] === "offense" && $formattedDisciplinaryAction !== "") {
-                                    $cellValue = $formattedDisciplinaryAction;
-                                    $cellClass = trim($cellClass . " summary-discipline-cell");
-                                }
-                            ?>
-                            <td class="<?= e($cellClass) ?>">
-                                <?= e($cellValue) ?>
-                            </td>
-                            <?php endif; ?>
+                    <div class="dashboard-activity-title"><?= e($titleValue) ?></div>
+                    <?php if ($metaParts !== []): ?>
+                    <div class="dashboard-activity-meta"><?= e(implode(" / ", $metaParts)) ?></div>
+                    <?php endif; ?>
+                </div>
+
+                <div class="summary-card-action">
+                    <?php if ($rowActionOptions !== []): ?>
+                    <form action="update_monitoring_action.php" method="POST" class="monitoring-action-form">
+                        <input type="hidden" name="company" value="<?= e($company["key"]) ?>">
+                        <input type="hidden" name="record_id" value="<?= e($row["id"] ?? "") ?>">
+                        <input type="hidden" name="filter_month" value="<?= e($filters["month"] ?? "") ?>">
+                        <input type="hidden" name="filter_branch" value="<?= e($filters["branch"] ?? "") ?>">
+                        <input type="hidden" name="filter_dealer" value="<?= e($filters["dealer"] ?? "") ?>">
+                        <input type="hidden" name="filter_identification_number" value="<?= e($filters["identification_number"] ?? "") ?>">
+                        <input type="hidden" name="filter_status" value="<?= e($filters["status"] ?? "") ?>">
+                        <input type="hidden" name="filter_data_correction" value="<?= !empty($filters["data_correction_only"]) ? "1" : "" ?>">
+                        <input type="hidden" name="filter_escalation" value="<?= !empty($filters["escalation_only"]) ? "1" : "" ?>">
+                        <input type="hidden" name="filter_page" value="<?= e($pagination["page"]) ?>">
+                        <select
+                            name="disciplinary_action"
+                            class="summary-action-select"
+                            aria-label="Choose disciplinary action"
+                            title="Choose Action"
+                            onchange="if (this.value !== '') { this.form.submit(); }"
+                        >
+                            <option value="" selected>&#9998;</option>
+                            <?php foreach ($rowActionOptions as $option): ?>
+                            <option value="<?= e($option) ?>"><?= e($option) ?></option>
                             <?php endforeach; ?>
-                        </tr>
-                    <?php endforeach; ?>
+                        </select>
+                    </form>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <div class="summary-card-tags">
+                <?php foreach ($statusTags as $statusTag): ?>
+                <span class="dashboard-chip"><?= e(uppercaseText($statusTag)) ?></span>
+                <?php endforeach; ?>
+
+                <?php foreach ($processedTypeTags as $processedTypeTag): ?>
+                <span class="dashboard-chip"><?= e(uppercaseText($processedTypeTag)) ?></span>
+                <?php endforeach; ?>
+
+                <?php if ($classificationValue !== ""): ?>
+                <span class="dashboard-chip"><?= e(uppercaseText($classificationValue)) ?></span>
                 <?php endif; ?>
-            </tbody>
-        </table>
+
+                <?php if (((int) ($row["data_correction_offense_count"] ?? 0)) > 0): ?>
+                <span class="dashboard-chip alert"><?= e((string) ($row["data_correction_offense_count"] ?? 0)) ?> DATA CORRECTION<?= ((int) ($row["data_correction_offense_count"] ?? 0)) > 1 ? "S" : "" ?></span>
+                <?php endif; ?>
+
+                <?php if ($ticketValue !== ""): ?>
+                <span class="dashboard-chip ticket">TICKET <?= e(uppercaseText($ticketValue)) ?></span>
+                <?php endif; ?>
+            </div>
+
+            <div class="summary-card-grid">
+                <div class="summary-card-field">
+                    <div class="summary-card-label">Department</div>
+                    <div class="summary-card-value"><?= e($formatCardValue((string) formatSummaryValue(["key" => "department", "format" => "text"], $row))) ?></div>
+                </div>
+                <div class="summary-card-field">
+                    <div class="summary-card-label">Client Name</div>
+                    <div class="summary-card-value"><?= e($formatCardValue((string) formatSummaryValue(["key" => "client_name", "format" => "text"], $row))) ?></div>
+                </div>
+                <div class="summary-card-field">
+                    <div class="summary-card-label">Transaction Reference</div>
+                    <div class="summary-card-value"><?= e($formatCardValue((string) formatSummaryValue(["key" => "invoice_reference", "format" => "text"], $row))) ?></div>
+                </div>
+                <div class="summary-card-field">
+                    <div class="summary-card-label">Approved By</div>
+                    <div class="summary-card-value"><?= e($formatCardValue((string) formatSummaryValue(["key" => "approved_by", "format" => "text"], $row))) ?></div>
+                </div>
+                <div class="summary-card-field">
+                    <div class="summary-card-label">Processed By</div>
+                    <div class="summary-card-value"><?= e($formatCardValue((string) formatSummaryValue(["key" => "processed_by", "format" => "text"], $row))) ?></div>
+                </div>
+                <div class="summary-card-field">
+                    <div class="summary-card-label">Alert / Action</div>
+                    <div class="summary-card-value"><?= e($formatCardValue($offenseValue)) ?></div>
+                </div>
+                <div class="summary-card-field summary-card-field-reason">
+                    <div class="summary-card-label">Reason</div>
+                    <div class="summary-card-value summary-card-value-multiline"><?= e($formatCardValue((string) formatSummaryValue(["key" => "reason", "format" => "text"], $row))) ?></div>
+                </div>
+            </div>
+        </article>
+        <?php endforeach; ?>
     </div>
+    <?php endif; ?>
 
     <?php if ($pagination["total_pages"] > 1): ?>
     <nav class="pagination" aria-label="Summary pages">

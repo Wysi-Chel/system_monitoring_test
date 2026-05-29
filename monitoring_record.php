@@ -113,6 +113,9 @@ function renderMonitoringReadonlyField(string $label, string $value, string $fie
             <input type="hidden" name="branch" value="<?= e($filters["branch"] ?? "") ?>">
             <input type="hidden" name="dealer" value="<?= e($filters["dealer"] ?? "") ?>">
             <input type="hidden" name="status" value="<?= e($filters["status"] ?? "") ?>">
+            <?php if (!empty($filters["data_correction_only"])): ?>
+            <input type="hidden" name="data_correction" value="1">
+            <?php endif; ?>
             <?php if (!empty($filters["escalation_only"])): ?>
             <input type="hidden" name="escalation" value="1">
             <?php endif; ?>
