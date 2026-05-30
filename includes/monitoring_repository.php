@@ -83,6 +83,7 @@ function buildMonitoringFilters(array $input, array $company, array $filterOptio
     $filters = [
         "search" => "",
         "identification_number" => normalizeIdentificationNumberFilter($input["id_number"] ?? ""),
+        "user_name" => normalizeSearchFilter($input["user"] ?? $input["user_name"] ?? ""),
         "month" => normalizeMonthFilter($input["month"] ?? ""),
         "date_from" => "",
         "date_to" => "",
@@ -177,6 +178,11 @@ function buildMonitoringWhereClause(array $filters, array &$bindings): string
     if (($filters["identification_number"] ?? "") !== "") {
         $conditions[] = "identification_number LIKE :identification_number ESCAPE '\\\\'";
         $bindings["identification_number"] = "%" . escapeLikeTerm($filters["identification_number"]) . "%";
+    }
+
+    if (($filters["user_name"] ?? "") !== "") {
+        $conditions[] = "UPPER(TRIM(COALESCE(user_name, ''))) LIKE :user_name ESCAPE '\\\\'";
+        $bindings["user_name"] = "%" . escapeLikeTerm(uppercaseText($filters["user_name"])) . "%";
     }
 
     if (($filters["month"] ?? "") !== "") {
@@ -449,6 +455,30 @@ function fetchMonitoringRecordByIdentificationNumber(PDO $pdo, string $tableName
 
     $record = $stmt->fetch(PDO::FETCH_ASSOC);
     return $record === false ? null : $record;
+}
+
+function fetchMonitoringRecordsByUserName(
+    PDO $pdo,
+    string $tableNameSql,
+    string $userName,
+    string $orderDirection = "DESC"
+): array {
+    $normalizedUserName = trim($userName);
+    if ($normalizedUserName === "") {
+        return [];
+    }
+
+    $direction = strtoupper($orderDirection) === "ASC" ? "ASC" : "DESC";
+    $stmt = $pdo->prepare(
+        "SELECT *
+         FROM {$tableNameSql}
+         WHERE UPPER(TRIM(COALESCE(user_name, ''))) = :user_name
+         ORDER BY transaction_date {$direction}, id {$direction}"
+    );
+    $stmt->bindValue(":user_name", uppercaseText($normalizedUserName), PDO::PARAM_STR);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function updateMonitoringRecordActionTaken(PDO $pdo, string $tableNameSql, int $id, string $actionTaken): void

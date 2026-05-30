@@ -65,6 +65,17 @@ $formatCardValue = static function (string $value): string {
             </div>
 
             <div class="field">
+                <label for="filter-user-name">User</label>
+                <input
+                    type="text"
+                    id="filter-user-name"
+                    name="user"
+                    value="<?= e($filters["user_name"] ?? "") ?>"
+                    placeholder="Enter user name"
+                >
+            </div>
+
+            <div class="field">
                 <label for="filter-status">Status</label>
                 <select id="filter-status" name="status">
                     <option value="">All statuses</option>
@@ -169,6 +180,7 @@ $formatCardValue = static function (string $value): string {
                         <input type="hidden" name="filter_branch" value="<?= e($filters["branch"] ?? "") ?>">
                         <input type="hidden" name="filter_dealer" value="<?= e($filters["dealer"] ?? "") ?>">
                         <input type="hidden" name="filter_identification_number" value="<?= e($filters["identification_number"] ?? "") ?>">
+                        <input type="hidden" name="filter_user_name" value="<?= e($filters["user_name"] ?? "") ?>">
                         <input type="hidden" name="filter_status" value="<?= e($filters["status"] ?? "") ?>">
                         <input type="hidden" name="filter_data_correction" value="<?= !empty($filters["data_correction_only"]) ? "1" : "" ?>">
                         <input type="hidden" name="filter_escalation" value="<?= !empty($filters["escalation_only"]) ? "1" : "" ?>">
@@ -213,27 +225,27 @@ $formatCardValue = static function (string $value): string {
             </div>
 
             <div class="summary-card-grid">
-                <div class="summary-card-field">
+                <div class="summary-card-field summary-card-field-department">
                     <div class="summary-card-label">Department</div>
                     <div class="summary-card-value"><?= e($formatCardValue((string) formatSummaryValue(["key" => "department", "format" => "text"], $row))) ?></div>
                 </div>
-                <div class="summary-card-field">
+                <div class="summary-card-field summary-card-field-client">
                     <div class="summary-card-label">Client Name</div>
                     <div class="summary-card-value"><?= e($formatCardValue((string) formatSummaryValue(["key" => "client_name", "format" => "text"], $row))) ?></div>
                 </div>
-                <div class="summary-card-field">
+                <div class="summary-card-field summary-card-field-reference">
                     <div class="summary-card-label">Transaction Reference</div>
                     <div class="summary-card-value"><?= e($formatCardValue((string) formatSummaryValue(["key" => "invoice_reference", "format" => "text"], $row))) ?></div>
                 </div>
-                <div class="summary-card-field">
+                <div class="summary-card-field summary-card-field-approved">
                     <div class="summary-card-label">Approved By</div>
                     <div class="summary-card-value"><?= e($formatCardValue((string) formatSummaryValue(["key" => "approved_by", "format" => "text"], $row))) ?></div>
                 </div>
-                <div class="summary-card-field">
+                <div class="summary-card-field summary-card-field-processed">
                     <div class="summary-card-label">Processed By</div>
                     <div class="summary-card-value"><?= e($formatCardValue((string) formatSummaryValue(["key" => "processed_by", "format" => "text"], $row))) ?></div>
                 </div>
-                <div class="summary-card-field">
+                <div class="summary-card-field summary-card-field-alert">
                     <div class="summary-card-label">Alert / Action</div>
                     <div class="summary-card-value"><?= e($formatCardValue($offenseValue)) ?></div>
                 </div>

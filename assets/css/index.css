@@ -1189,7 +1189,25 @@ button,
 }
 
 .summary-card-monitoring .summary-card-grid {
-    grid-template-columns: repeat(5, minmax(105px, 1fr));
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+}
+
+.summary-card-monitoring .summary-card-field-department {
+    grid-column: span 1;
+}
+
+.summary-card-monitoring .summary-card-field-client {
+    grid-column: span 2;
+}
+
+.summary-card-monitoring .summary-card-field-reference {
+    grid-column: span 2;
+}
+
+.summary-card-monitoring .summary-card-field-approved,
+.summary-card-monitoring .summary-card-field-processed,
+.summary-card-monitoring .summary-card-field-alert {
+    grid-column: span 1;
 }
 
 .summary-card-field {
@@ -1206,7 +1224,7 @@ button,
 }
 
 .summary-card-monitoring .summary-card-field-reason {
-    grid-column: 2 / -1;
+    grid-column: span 2;
 }
 
 .summary-card-label {
@@ -1875,6 +1893,41 @@ html.dark-theme .status-pill-closed {
     white-space: pre-wrap;
 }
 
+.record-history-table {
+    min-width: 1080px;
+}
+
+.record-history-table td:nth-child(4),
+.record-history-table td:nth-child(8),
+.record-history-table td:nth-child(9) {
+    min-width: 140px;
+    white-space: normal;
+}
+
+.record-history-current-row td {
+    background: var(--brand-soft);
+    color: var(--brand-dark);
+}
+
+.record-history-view-cell {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.record-history-current-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 9px;
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.5);
+    color: var(--brand-dark);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
 .record-image-panel {
     border: 1px solid var(--border);
     background: var(--surface-soft);
@@ -1900,6 +1953,20 @@ html.dark-theme .status-pill-closed {
 
     .summary-card-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .summary-card-monitoring .summary-card-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .summary-card-monitoring .summary-card-field-department,
+    .summary-card-monitoring .summary-card-field-client,
+    .summary-card-monitoring .summary-card-field-reference,
+    .summary-card-monitoring .summary-card-field-approved,
+    .summary-card-monitoring .summary-card-field-processed,
+    .summary-card-monitoring .summary-card-field-alert,
+    .summary-card-monitoring .summary-card-field-reason {
+        grid-column: span 1;
     }
 
     .field-grid {
@@ -1948,8 +2015,12 @@ html.dark-theme .status-pill-closed {
         grid-template-columns: 1fr;
     }
 
+    .summary-card-monitoring .summary-card-grid {
+        grid-template-columns: 1fr;
+    }
+
     .summary-card-monitoring .summary-card-field-reason {
-        grid-column: 1 / -1;
+        grid-column: span 1;
     }
 
     .dashboard-ticket-metric strong,

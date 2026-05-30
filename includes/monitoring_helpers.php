@@ -110,6 +110,7 @@ function buildMonitoringListQueryParams(string $companyKey, array $filters, bool
     $fieldMap = [
         "search" => "q",
         "identification_number" => "id_number",
+        "user_name" => "user",
         "month" => "month",
         "date_from" => "date_from",
         "date_to" => "date_to",
@@ -373,6 +374,10 @@ function buildActiveFilterBadges(array $filters, ?string $fixedBranch = null): a
 
     if (($filters["identification_number"] ?? "") !== "") {
         $badges[] = "ID Number: " . $filters["identification_number"];
+    }
+
+    if (($filters["user_name"] ?? "") !== "") {
+        $badges[] = "User: " . uppercaseText($filters["user_name"]);
     }
 
     if ($filters["status"] !== "") {

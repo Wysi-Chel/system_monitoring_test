@@ -59,6 +59,17 @@ if ($identificationNumber === "") {
     $recordLookupMessage = "NO RECORD WAS FOUND FOR ID NUMBER " . $identificationNumber . ".";
 }
 
+$recordUserName = trim((string) ($record["user_name"] ?? ""));
+$userTransactionRecords = [];
+$userTransactionSummaryUrl = "";
+if ($record !== null && $recordUserName !== "") {
+    $userTransactionRecords = fetchMonitoringRecordsByUserName($pdo, $tableNameSql, $recordUserName);
+    $userTransactionSummaryUrl = buildUrl("index.php", [
+        "company" => $company["key"],
+        "user" => $recordUserName,
+    ]) . "#summary-section";
+}
+
 $incidentReportImagePath = trim((string) ($record["incident_report_image_path"] ?? ""));
 $incidentReportImageAbsolutePath = $incidentReportImagePath !== ""
     ? getMonitoringStoredFileAbsolutePath($incidentReportImagePath)
@@ -112,6 +123,7 @@ function renderMonitoringReadonlyField(string $label, string $value, string $fie
             <input type="hidden" name="month" value="<?= e($filters["month"] ?? "") ?>">
             <input type="hidden" name="branch" value="<?= e($filters["branch"] ?? "") ?>">
             <input type="hidden" name="dealer" value="<?= e($filters["dealer"] ?? "") ?>">
+            <input type="hidden" name="user" value="<?= e($filters["user_name"] ?? "") ?>">
             <input type="hidden" name="status" value="<?= e($filters["status"] ?? "") ?>">
             <?php if (!empty($filters["data_correction_only"])): ?>
             <input type="hidden" name="data_correction" value="1">
@@ -203,6 +215,91 @@ function renderMonitoringReadonlyField(string $label, string $value, string $fie
                 </div>
             </section>
         </div>
+    </section>
+
+    <section class="card">
+        <div class="summary-header">
+            <div>
+                <h2>User Transaction History</h2>
+                <?php if ($recordUserName !== ""): ?>
+                <p class="note">
+                    Showing <strong><?= e((string) count($userTransactionRecords)) ?></strong> transaction<?= count($userTransactionRecords) === 1 ? "" : "s" ?>
+                    recorded for user <strong><?= e(uppercaseText($recordUserName)) ?></strong>.
+                </p>
+                <?php else: ?>
+                <p class="note">This record has no user name, so related transactions cannot be matched yet.</p>
+                <?php endif; ?>
+            </div>
+            <?php if ($userTransactionSummaryUrl !== ""): ?>
+            <a href="<?= e($userTransactionSummaryUrl) ?>" class="button-link secondary">Open User Summary</a>
+            <?php endif; ?>
+        </div>
+
+        <?php if ($recordUserName === ""): ?>
+        <p class="note">Add a user name to this record if you want it to appear in transaction history lookups.</p>
+        <?php elseif ($userTransactionRecords === []): ?>
+        <div class="summary-card-empty">No transactions were found for this user.</div>
+        <?php else: ?>
+        <div class="table-wrapper compact-summary-table-wrapper">
+            <table class="compact-summary-table record-history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Transaction Date</th>
+                        <th>ID Number</th>
+                        <th>Client Name</th>
+                        <th>Transaction Reference</th>
+                        <th>Payment Reference</th>
+                        <th>Amount</th>
+                        <th>Processed Type</th>
+                        <th>Status</th>
+                        <th>View</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($userTransactionRecords as $historyRow): ?>
+                        <?php
+                        $historyRecordId = (int) ($historyRow["id"] ?? 0);
+                        $historyIdentificationNumber = trim((string) ($historyRow["identification_number"] ?? ""));
+                        $historyRecordUrl = $historyIdentificationNumber !== ""
+                            ? buildUrl("monitoring_record.php", $listQueryParams, [
+                                "identification_number" => $historyIdentificationNumber,
+                                "id_number" => null,
+                            ])
+                            : "";
+                        $isCurrentRecord = $historyRecordId === (int) ($record["id"] ?? 0);
+                        ?>
+                    <tr<?= $isCurrentRecord ? ' class="record-history-current-row"' : "" ?>>
+                        <td><?= e(formatMonitoringDetailDisplayValue(["key" => "date_recorded", "format" => "date"], $historyRow)) ?></td>
+                        <td><?= e(formatMonitoringDetailDisplayValue(["key" => "transaction_date", "format" => "date"], $historyRow)) ?></td>
+                        <td>
+                            <?php if ($historyRecordUrl !== ""): ?>
+                            <a href="<?= e($historyRecordUrl) ?>" class="record-link"><?= e($historyIdentificationNumber) ?></a>
+                            <?php else: ?>
+                            <?= e($historyIdentificationNumber !== "" ? $historyIdentificationNumber : "N/A") ?>
+                            <?php endif; ?>
+                        </td>
+                        <td><?= e(formatMonitoringDetailDisplayValue(["key" => "client_name", "format" => "text"], $historyRow)) ?></td>
+                        <td><?= e(formatMonitoringDetailDisplayValue(["key" => "invoice_reference", "format" => "text"], $historyRow)) ?></td>
+                        <td><?= e(formatMonitoringDetailDisplayValue(["key" => "payment_reference", "format" => "text"], $historyRow)) ?></td>
+                        <td><?= e(formatMonitoringDetailDisplayValue(["key" => "amount", "format" => "amount"], $historyRow)) ?></td>
+                        <td><?= e(formatMonitoringDetailDisplayValue(["key" => "processed_type", "format" => "text"], $historyRow)) ?></td>
+                        <td><?= e(formatMonitoringDetailDisplayValue(["key" => "status", "format" => "text"], $historyRow)) ?></td>
+                        <td class="record-history-view-cell">
+                            <?php if ($isCurrentRecord): ?>
+                            <span class="record-history-current-label">Current Record</span>
+                            <?php elseif ($historyRecordUrl !== ""): ?>
+                            <a href="<?= e($historyRecordUrl) ?>" class="record-link">Open</a>
+                            <?php else: ?>
+                            <span class="note">Unavailable</span>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php endif; ?>
     </section>
 
     <section class="card">
