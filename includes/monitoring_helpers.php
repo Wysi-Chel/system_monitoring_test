@@ -566,7 +566,6 @@ function buildMonitoringDashboardData(
         "module_breakdown" => buildDashboardBreakdownItems($moduleCounts, $totalRecords, 6),
         "branch_breakdown" => buildDashboardBreakdownItems($branchCounts, $totalRecords, 6),
         "dealer_breakdown" => buildDashboardBreakdownItems($dealerCounts, $totalRecords, 6),
-        "recent_records" => array_slice($records, 0, 6),
     ];
 }
 

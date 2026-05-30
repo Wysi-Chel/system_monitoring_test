@@ -1,6 +1,5 @@
 <?php
 $dashboardMetrics = $dashboardData["metrics"] ?? [];
-$recentDashboardRecords = $dashboardData["recent_records"] ?? [];
 $dashboardDataCorrectionUrl = buildUrl("index.php", $listQueryParams, [
     "data_correction" => 1,
     "escalation" => null,
@@ -168,71 +167,5 @@ $renderDashboardBreakdown = static function (array $items, string $emptyMessage)
         </article>
         <?php endif; ?>
 
-        <article class="dashboard-panel dashboard-panel-wide">
-            <div class="dashboard-panel-header">
-                <div>
-                    <h3>Recent Monitoring Activity</h3>
-                </div>
-            </div>
-
-            <?php if ($recentDashboardRecords === []): ?>
-            <p class="dashboard-empty-state">No monitoring records are available yet.</p>
-            <?php else: ?>
-            <div class="dashboard-activity-list">
-                <?php foreach ($recentDashboardRecords as $row): ?>
-                    <?php
-                    $identificationNumber = trim((string) ($row["identification_number"] ?? ""));
-                    $recordUrl = $identificationNumber !== ""
-                        ? buildUrl("monitoring_record.php", $listQueryParams, ["identification_number" => $identificationNumber])
-                        : "";
-                    $activityTitle = trim((string) ($row["user_name"] ?? ""));
-                    if ($activityTitle === "") {
-                        $activityTitle = trim((string) ($row["client_name"] ?? ""));
-                    }
-                    if ($activityTitle === "") {
-                        $activityTitle = "Unassigned";
-                    }
-                    $statusTags = splitMultiValueText($row["status"] ?? "");
-                    if ($statusTags === []) {
-                        $statusTags = ["No Status"];
-                    }
-                    $ticketValue = trim((string) ($row["ticket"] ?? ""));
-                    $metaParts = array_filter([
-                        formatDisplayDate((string) ($row["date_recorded"] ?? "")),
-                        trim((string) ($row["module"] ?? "")),
-                        trim((string) ($row["dealer"] ?? "")),
-                        trim((string) ($row["branch"] ?? "")),
-                    ]);
-                    ?>
-                <div class="dashboard-activity-item">
-                    <div class="dashboard-activity-main">
-                        <?php if ($recordUrl !== ""): ?>
-                        <a href="<?= e($recordUrl) ?>" class="dashboard-activity-id"><?= e($identificationNumber) ?></a>
-                        <?php else: ?>
-                        <span class="dashboard-activity-id"><?= e($identificationNumber !== "" ? $identificationNumber : "No ID") ?></span>
-                        <?php endif; ?>
-
-                        <div class="dashboard-activity-title"><?= e(uppercaseText($activityTitle)) ?></div>
-                        <div class="dashboard-activity-meta"><?= e(implode(" / ", $metaParts)) ?></div>
-                    </div>
-
-                    <div class="dashboard-activity-tags">
-                        <?php foreach ($statusTags as $statusTag): ?>
-                        <span class="dashboard-chip"><?= e(uppercaseText($statusTag)) ?></span>
-                        <?php endforeach; ?>
-
-                        <?php if (((int) ($row["data_correction_offense_count"] ?? 0)) >= 3): ?>
-                        <span class="dashboard-chip alert">3+ DATA CORRECTIONS</span>
-                        <?php endif; ?>
-
-                        <?php if ($ticketValue !== ""): ?>
-                        <span class="dashboard-chip ticket">TICKET <?= e(uppercaseText($ticketValue)) ?></span>
-                        <?php endif; ?>
-                    </div>
-                </div>
-                <?php endforeach; ?>
-            </div>
-            <?php endif; ?>
-        </article>
     </div>
 </section>

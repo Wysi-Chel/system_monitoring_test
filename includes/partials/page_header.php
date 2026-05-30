@@ -14,7 +14,6 @@ $encodeRecordUrl = $currentScript === "index.php"
 $summaryUrl = $currentScript === "index.php"
     ? "#summary-section"
     : $monitoringHomeUrl . "#summary-section";
-$recordLookupUrl = buildUrl("monitoring_record.php", ["company" => $company["key"]]);
 $ticketNavUrl = $ticketMonitoringUrl ?? buildUrl("ticket_monitoring.php", ["company" => $company["key"]]);
 $promotionUrl = buildUrl("promote_to_live.php", ["company" => $company["key"]]);
 
@@ -29,11 +28,6 @@ $navItems = [
         "href" => $ticketNavUrl,
         "script" => "ticket_monitoring.php",
         "visible" => companySupportsTicketMonitoring($company),
-    ],
-    [
-        "label" => "Record Details",
-        "href" => $recordLookupUrl,
-        "script" => "monitoring_record.php",
     ],
     [
         "label" => "Promote To Live",
