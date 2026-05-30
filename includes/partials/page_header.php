@@ -68,9 +68,6 @@ $navItems = [
         <div class="sidebar-panel-label">Quick Action</div>
         <a href="<?= e($encodeRecordUrl) ?>" class="button-link primary">Encode New Record</a>
         <a href="<?= e($summaryUrl) ?>" class="button-link secondary">Open Summary</a>
-        <?php if (companySupportsTicketMonitoring($company)): ?>
-        <a href="<?= e($ticketNavUrl) ?>" class="button-link secondary">Open Tickets</a>
-        <?php endif; ?>
     </section>
 
     <div class="sidebar-footer">

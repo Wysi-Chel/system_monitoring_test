@@ -71,7 +71,7 @@ $formatCardValue = static function (string $value): string {
                     id="filter-user-name"
                     name="user"
                     value="<?= e($filters["user_name"] ?? "") ?>"
-                    placeholder="Enter user name"
+                    placeholder=""
                 >
             </div>
 
