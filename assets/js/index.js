@@ -147,7 +147,10 @@
 
         if (window.history && typeof window.history.replaceState === "function" && typeof URL === "function") {
             var url = new URL(window.location.href);
-            url.searchParams.delete("saved");
+            var successParams = ["saved", "updated", "identification_number", "ticket_number"];
+            for (var index = 0; index < successParams.length; index += 1) {
+                url.searchParams.delete(successParams[index]);
+            }
             var query = url.searchParams.toString();
             var nextUrl = url.pathname + (query ? "?" + query : "") + url.hash;
             window.history.replaceState({}, document.title, nextUrl);

@@ -86,9 +86,10 @@ $clearFiltersUrl = buildUrl("index.php", ["company" => $company["key"]]);
 $exportUrl = buildUrl("export_excel.php", buildMonitoringListQueryParams($company["key"], $filters, false, $monitoringSummaryRowsPerPageOptions[0]));
 $activeFilterBadges = buildActiveFilterBadges($filters);
 $savedIdentificationNumber = trim((string) ($_GET["identification_number"] ?? ""));
+$savedTitle = "Record Saved";
 $savedMessage = $savedIdentificationNumber !== ""
     ? "Record " . $savedIdentificationNumber . " successfully saved to the " . $company["table_name"] . " table."
-    : "Record successfully saved to the " . $company["table_name"] . " table.";
+    : "";
 $validationErrorMessage = resolveMonitoringValidationErrorMessage($_GET["error"] ?? null);
 ?>
 <!DOCTYPE html>

@@ -85,14 +85,7 @@ $renderDashboardBreakdown = static function (array $items, string $emptyMessage)
             <?php $renderDashboardBreakdown($dashboardData["status_breakdown"] ?? [], "No status tags are available for this scope."); ?>
         </article>
 
-        <article class="dashboard-panel dashboard-panel-wide">
-            <div class="dashboard-panel-header">
-                <div>
-                    <h3>Processed Type Mix</h3>
-                </div>
-            </div>
-            <?php $renderDashboardBreakdown($dashboardData["processed_type_breakdown"] ?? [], "No processed types are available for this scope."); ?>
-        </article>
+
 
         <article class="dashboard-panel">
             <div class="dashboard-panel-header">

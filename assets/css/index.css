@@ -1556,17 +1556,23 @@ button,
     justify-content: center;
     padding: 20px;
     background: var(--overlay);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
     z-index: 1000;
 }
 
 .modal-window {
-    width: min(100%, 420px);
+    width: min(100%, 380px);
     border: 1px solid var(--border);
     background: var(--surface);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
 }
 
 .modal-body {
-    padding: 24px 20px;
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+    padding: 28px 24px 24px;
     text-align: center;
 }
 
@@ -1575,7 +1581,7 @@ button,
     place-items: center;
     width: 50px;
     height: 50px;
-    margin: 0 auto 12px;
+    margin: 0 0 2px;
     background: var(--success-bg);
     color: var(--success-text);
     font-size: 24px;
@@ -1583,21 +1589,23 @@ button,
 }
 
 .modal-title {
-    margin: 0 0 8px;
+    margin: 0;
     color: var(--text);
-    font-size: 22px;
+    font-size: 24px;
+    line-height: 1.15;
 }
 
 .modal-message {
     margin: 0;
     color: var(--text-muted);
     font-size: 14px;
+    line-height: 1.45;
 }
 
 .modal-actions {
     display: flex;
     justify-content: center;
-    margin-top: 18px;
+    margin-top: 8px;
 }
 
 .modal-button {
@@ -2751,11 +2759,35 @@ body.page-ticket-monitoring .record-image-panel,
 body.page-system-monitoring .summary-card,
 body.page-ticket-monitoring .summary-card,
 body.page-system-monitoring .form-section,
-body.page-ticket-monitoring .form-section,
-body.page-system-monitoring .modal-window,
-body.page-ticket-monitoring .modal-window {
+body.page-ticket-monitoring .form-section {
     border-radius: 20px;
     background: rgba(255, 255, 255, 0.03);
+}
+
+body.page-system-monitoring .modal-overlay,
+body.page-ticket-monitoring .modal-overlay {
+    background: rgba(17, 19, 23, 0.72);
+}
+
+body.page-system-monitoring .modal-window,
+body.page-ticket-monitoring .modal-window {
+    border: 1px solid rgba(111, 98, 94, 0.18);
+    border-radius: 20px;
+    background: #fffaf6;
+    box-shadow: 0 28px 90px rgba(33, 25, 21, 0.28);
+}
+
+html.dark-theme body.page-system-monitoring .modal-window,
+html.dark-theme body.page-ticket-monitoring .modal-window {
+    border-color: rgba(199, 186, 172, 0.16);
+    background: #202630;
+    box-shadow: 0 28px 90px rgba(0, 0, 0, 0.44);
+}
+
+body.page-system-monitoring .modal-message,
+body.page-ticket-monitoring .modal-message {
+    max-width: 30ch;
+    color: var(--text-soft);
 }
 
 body.page-system-monitoring .summary-card,

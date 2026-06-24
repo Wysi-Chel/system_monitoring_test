@@ -156,7 +156,7 @@
         </section>
 
         <div class="buttons">
-            <button type="submit" class="primary">Enter / Save to Database</button>
+            <button type="submit" class="primary">Save</button>
             <button type="reset" class="secondary">Clear Form</button>
         </div>
     </form>

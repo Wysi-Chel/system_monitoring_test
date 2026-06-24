@@ -45,9 +45,13 @@ $headerKicker = $company["company_name"];
 $headerTitle = "Ticket Monitoring";
 $showCompanySwitch = true;
 $paginationPages = buildPaginationPages($pagination["page"], $pagination["total_pages"]);
+$savedTicketNumber = trim((string) ($_GET["ticket_number"] ?? ""));
+$savedTitle = isset($_GET["updated"]) ? "Ticket Updated" : "Ticket Saved";
 $savedMessage = isset($_GET["updated"])
     ? "Ticket status successfully updated."
-    : "Ticket monitoring record successfully saved to the " . $company["ticket_table_name"] . " table.";
+    : ($savedTicketNumber !== ""
+        ? "Ticket " . $savedTicketNumber . " successfully saved to the " . $company["ticket_table_name"] . " table."
+        : "Ticket monitoring record successfully saved to the " . $company["ticket_table_name"] . " table.");
 $ticketFormDefaults = [
     "dealer" => "",
     "module" => "",
