@@ -100,8 +100,8 @@ $renderDashboardBreakdown = static function (array $items, string $emptyMessage)
                     <span class="dashboard-ticket-label">Total Tickets</span>
                     <strong><?= e(number_format((int) ($ticketDashboardData["metrics"]["total_tickets"] ?? 0))) ?></strong>
                 </div>
-                <div class="dashboard-ticket-metric">
-                    <span class="dashboard-ticket-label">Active</span>
+                    <div class="dashboard-ticket-metric">
+                        <span class="dashboard-ticket-label">Active</span>
                     <strong><?= e(number_format((int) ($ticketDashboardData["metrics"]["active_tickets"] ?? 0))) ?></strong>
                 </div>
                 <div class="dashboard-ticket-metric">
