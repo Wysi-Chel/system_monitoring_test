@@ -287,7 +287,7 @@ function renderMonitoringReadonlyField(string $label, string $value, string $fie
                         <td><?= e(formatMonitoringDetailDisplayValue(["key" => "status", "format" => "text"], $historyRow)) ?></td>
                         <td class="record-history-view-cell">
                             <?php if ($isCurrentRecord): ?>
-                            <span class="record-history-current-label">Current Record</span>
+                            <span class="record-history-current-label">Watching</span>
                             <?php elseif ($historyRecordUrl !== ""): ?>
                             <a href="<?= e($historyRecordUrl) ?>" class="record-link">Open</a>
                             <?php else: ?>

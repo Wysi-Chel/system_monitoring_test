@@ -86,43 +86,6 @@ $renderDashboardBreakdown = static function (array $items, string $emptyMessage)
         </article>
 
 
-
-        <article class="dashboard-panel">
-            <div class="dashboard-panel-header">
-                <div>
-                    <h3>Module Activity</h3>
-                </div>
-            </div>
-            <?php $renderDashboardBreakdown($dashboardData["module_breakdown"] ?? [], "No module activity is available yet."); ?>
-        </article>
-
-        <article class="dashboard-panel">
-            <div class="dashboard-panel-header">
-                <div>
-                    <h3>Classification Mix</h3>
-                </div>
-            </div>
-            <?php $renderDashboardBreakdown($dashboardData["classification_breakdown"] ?? [], "No classifications are available for this scope."); ?>
-        </article>
-
-        <article class="dashboard-panel">
-            <div class="dashboard-panel-header">
-                <div>
-                    <h3>Branch Activity</h3>
-                </div>
-            </div>
-            <?php $renderDashboardBreakdown($dashboardData["branch_breakdown"] ?? [], "No branch activity is available for this scope."); ?>
-        </article>
-
-        <article class="dashboard-panel">
-            <div class="dashboard-panel-header">
-                <div>
-                    <h3>Dealer Activity</h3>
-                </div>
-            </div>
-            <?php $renderDashboardBreakdown($dashboardData["dealer_breakdown"] ?? [], "No dealer activity is available for this scope."); ?>
-        </article>
-
         <?php if ($ticketDashboardData !== null): ?>
         <article class="dashboard-panel dashboard-panel-wide dashboard-ticket-panel">
             <div class="dashboard-panel-header">
