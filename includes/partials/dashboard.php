@@ -50,26 +50,29 @@ $renderDashboardBreakdown = static function (array $items, string $emptyMessage)
             <?php endforeach; ?>
         </div>
         <?php else: ?>
+        <div class="active-filters dashboard-filter-strip" aria-label="Dashboard scope filters">
+            <span class="filter-badge">All records</span>
+        </div>
         <?php endif; ?>
     </div>
 
     <div class="dashboard-metrics-grid">
-        <article class="dashboard-metric-card">
+        <article class="dashboard-metric-card dashboard-metric-total">
             <div class="dashboard-metric-label">Total Records</div>
             <div class="dashboard-metric-value"><?= e(number_format((int) ($dashboardMetrics["total_records"] ?? 0))) ?></div>
         </article>
 
-        <a href="<?= e($dashboardDataCorrectionUrl) ?>" class="dashboard-metric-card dashboard-metric-link">
+        <a href="<?= e($dashboardDataCorrectionUrl) ?>" class="dashboard-metric-card dashboard-metric-link dashboard-metric-correction">
             <div class="dashboard-metric-label">Data Correction</div>
             <div class="dashboard-metric-value"><?= e(number_format((int) ($dashboardMetrics["data_correction_records"] ?? 0))) ?></div>
         </a>
 
-        <a href="<?= e($dashboardEscalationUrl) ?>" class="dashboard-metric-card dashboard-metric-link">
+        <a href="<?= e($dashboardEscalationUrl) ?>" class="dashboard-metric-card dashboard-metric-link dashboard-metric-escalation">
             <div class="dashboard-metric-label">Escalation Candidates</div>
             <div class="dashboard-metric-value"><?= e(number_format((int) ($dashboardMetrics["escalation_records"] ?? 0))) ?></div>
         </a>
 
-        <article class="dashboard-metric-card">
+        <article class="dashboard-metric-card dashboard-metric-tickets">
             <div class="dashboard-metric-label">Linked Tickets</div>
             <div class="dashboard-metric-value"><?= e(number_format((int) ($dashboardMetrics["linked_tickets"] ?? 0))) ?></div>
         </article>

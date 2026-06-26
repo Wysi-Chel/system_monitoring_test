@@ -261,6 +261,56 @@ body {
     line-height: 1.4;
 }
 
+body.page-login {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background:
+        radial-gradient(circle at top left, rgba(191, 31, 47, 0.12), transparent 28%),
+        linear-gradient(145deg, #f8f3ee 0%, #ede4dd 48%, #f8f4f0 100%);
+    font-family: 'IBM Plex Sans', Arial, sans-serif;
+}
+
+.login-shell {
+    width: min(100%, 420px);
+    margin: 0;
+    padding: 0;
+}
+
+.login-card {
+    padding: 28px;
+    border: 1px solid rgba(111, 98, 94, 0.16);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 24px 70px rgba(80, 54, 45, 0.16);
+}
+
+.login-kicker {
+    color: var(--brand-dark);
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.login-card h1 {
+    margin: 8px 0 22px;
+    color: var(--text);
+    font-family: 'Space Grotesk', Arial, sans-serif;
+    font-size: 2rem;
+    line-height: 1.1;
+}
+
+.login-form {
+    display: grid;
+    gap: 14px;
+}
+
+.login-form button {
+    min-height: 46px;
+}
+
 header {
     padding: 18px 24px 20px;
     background: var(--header-bg);
@@ -3130,8 +3180,22 @@ body.page-ticket-monitoring .header-kicker-row {
 @media (max-width: 700px) {
     body.page-system-monitoring,
     body.page-ticket-monitoring {
-        padding: 14px;
+        padding: 16px;
+        gap: 18px;
+        align-content: start;
+    }
+
+    body.page-system-monitoring .app-sidebar,
+    body.page-ticket-monitoring .app-sidebar {
         gap: 14px;
+        padding: 16px;
+        border-radius: 22px;
+        box-shadow: 0 16px 42px rgba(80, 54, 45, 0.1);
+    }
+
+    html.dark-theme body.page-system-monitoring .app-sidebar,
+    html.dark-theme body.page-ticket-monitoring .app-sidebar {
+        box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
     }
 
     body.page-system-monitoring .app-topbar,
@@ -3140,7 +3204,7 @@ body.page-ticket-monitoring .header-kicker-row {
     body.page-ticket-monitoring .app-topbar,
     body.page-ticket-monitoring .brand-block,
     body.page-ticket-monitoring .card {
-        padding: 18px;
+        padding: 20px;
     }
 
     body.page-system-monitoring .summary-card,
@@ -3156,9 +3220,45 @@ body.page-ticket-monitoring .header-kicker-row {
         align-items: flex-start;
     }
 
+    body.page-system-monitoring .app-topbar,
+    body.page-ticket-monitoring .app-topbar {
+        gap: 18px;
+        border-radius: 22px;
+        box-shadow: 0 16px 42px rgba(80, 54, 45, 0.1);
+    }
+
+    html.dark-theme body.page-system-monitoring .app-topbar,
+    html.dark-theme body.page-ticket-monitoring .app-topbar {
+        box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
+    }
+
+    body.page-system-monitoring .page-title,
+    body.page-ticket-monitoring .page-title {
+        font-size: 1.55rem;
+        line-height: 1.15;
+    }
+
+    body.page-system-monitoring .page-description,
+    body.page-ticket-monitoring .page-description {
+        font-size: 0.92rem;
+    }
+
+    body.page-system-monitoring .topbar-badges,
+    body.page-ticket-monitoring .topbar-badges {
+        gap: 8px;
+        margin-top: 14px;
+    }
+
+    body.page-system-monitoring .info-pill,
+    body.page-ticket-monitoring .info-pill {
+        width: 100%;
+        justify-content: center;
+        padding: 9px 12px;
+    }
+
     body.page-system-monitoring .company-switch,
     body.page-ticket-monitoring .company-switch {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     body.page-system-monitoring .theme-toggle,
@@ -3167,5 +3267,511 @@ body.page-ticket-monitoring .header-kicker-row {
     body.page-ticket-monitoring .topbar-inline-action {
         width: 100%;
         justify-content: center;
+    }
+
+    body.page-system-monitoring .dashboard-shell,
+    body.page-ticket-monitoring .dashboard-shell {
+        gap: 14px;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+        overflow: visible;
+    }
+
+    body.page-system-monitoring .dashboard-hero,
+    body.page-ticket-monitoring .dashboard-hero {
+        padding: 18px;
+        border-radius: 22px;
+        min-height: 0;
+        background:
+            linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03)),
+            var(--brand-gradient);
+        color: #fff8f6;
+    }
+
+    body.page-system-monitoring .dashboard-hero h2,
+    body.page-ticket-monitoring .dashboard-hero h2 {
+        margin: 10px 0 0;
+        color: #fff8f6;
+        font-size: 1.35rem;
+        line-height: 1.15;
+    }
+
+    body.page-system-monitoring .dashboard-kicker,
+    body.page-ticket-monitoring .dashboard-kicker {
+        border-color: rgba(255, 255, 255, 0.32);
+        background: rgba(255, 255, 255, 0.12);
+        color: #fff8f6;
+        font-size: 0.68rem;
+        letter-spacing: 0.08em;
+    }
+
+    body.page-system-monitoring .dashboard-scope,
+    body.page-ticket-monitoring .dashboard-scope {
+        gap: 10px;
+        padding: 14px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: linear-gradient(180deg, var(--surface-strong), var(--surface));
+        box-shadow: 0 10px 26px rgba(80, 54, 45, 0.07);
+    }
+
+    html.dark-theme body.page-system-monitoring .dashboard-scope,
+    html.dark-theme body.page-ticket-monitoring .dashboard-scope {
+        box-shadow: 0 16px 38px rgba(0, 0, 0, 0.18);
+    }
+
+    body.page-system-monitoring .dashboard-filter-strip,
+    body.page-ticket-monitoring .dashboard-filter-strip {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 2px;
+        gap: 8px;
+        scrollbar-width: none;
+    }
+
+    body.page-system-monitoring .dashboard-filter-strip::-webkit-scrollbar,
+    body.page-ticket-monitoring .dashboard-filter-strip::-webkit-scrollbar {
+        display: none;
+    }
+
+    body.page-system-monitoring .filter-badge,
+    body.page-ticket-monitoring .filter-badge {
+        flex: 0 0 auto;
+        justify-content: center;
+        min-height: 34px;
+        padding: 8px 11px;
+        text-align: center;
+        line-height: 1.25;
+    }
+
+    body.page-system-monitoring .dashboard-metrics-grid,
+    body.page-ticket-monitoring .dashboard-metrics-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    body.page-system-monitoring .dashboard-panel-grid,
+    body.page-ticket-monitoring .dashboard-panel-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    body.page-system-monitoring .dashboard-ticket-metrics,
+    body.page-ticket-monitoring .dashboard-ticket-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    body.page-system-monitoring .dashboard-panel-wide,
+    body.page-ticket-monitoring .dashboard-panel-wide {
+        grid-column: auto;
+    }
+
+    body.page-system-monitoring .dashboard-metric-total,
+    body.page-ticket-monitoring .dashboard-metric-total {
+        grid-column: 1 / -1;
+        min-height: 112px;
+        background:
+            radial-gradient(circle at top right, var(--brand-soft), transparent 45%),
+            linear-gradient(180deg, var(--surface-strong), var(--surface));
+    }
+
+    body.page-system-monitoring .dashboard-metric-card,
+    body.page-ticket-monitoring .dashboard-metric-card {
+        display: grid;
+        align-content: space-between;
+        min-height: 100px;
+        padding: 14px;
+        border-radius: 18px;
+        box-shadow: 0 10px 26px rgba(80, 54, 45, 0.07);
+    }
+
+    body.page-system-monitoring .dashboard-panel,
+    body.page-ticket-monitoring .dashboard-panel {
+        padding: 16px;
+        border-radius: 18px;
+        box-shadow: 0 10px 26px rgba(80, 54, 45, 0.07);
+    }
+
+    body.page-system-monitoring .dashboard-ticket-metric,
+    body.page-ticket-monitoring .dashboard-ticket-metric {
+        min-height: 88px;
+        padding: 13px;
+        border-radius: 16px;
+        box-shadow: none;
+    }
+
+    html.dark-theme body.page-system-monitoring .dashboard-metric-card,
+    html.dark-theme body.page-ticket-monitoring .dashboard-metric-card,
+    html.dark-theme body.page-system-monitoring .dashboard-panel,
+    html.dark-theme body.page-ticket-monitoring .dashboard-panel,
+    html.dark-theme body.page-system-monitoring .dashboard-ticket-metric,
+    html.dark-theme body.page-ticket-monitoring .dashboard-ticket-metric {
+        box-shadow: 0 16px 38px rgba(0, 0, 0, 0.18);
+    }
+
+    body.page-system-monitoring .dashboard-metric-value,
+    body.page-ticket-monitoring .dashboard-metric-value {
+        margin-top: 8px;
+        font-size: 1.85rem;
+    }
+
+    body.page-system-monitoring .dashboard-metric-total .dashboard-metric-value,
+    body.page-ticket-monitoring .dashboard-metric-total .dashboard-metric-value {
+        font-size: 2.45rem;
+    }
+
+    body.page-system-monitoring .dashboard-metric-label,
+    body.page-ticket-monitoring .dashboard-metric-label,
+    body.page-system-monitoring .dashboard-ticket-label,
+    body.page-ticket-monitoring .dashboard-ticket-label {
+        font-size: 0.68rem;
+        line-height: 1.25;
+        letter-spacing: 0.04em;
+        overflow-wrap: anywhere;
+    }
+
+    body.page-system-monitoring .dashboard-ticket-metric strong,
+    body.page-ticket-monitoring .dashboard-ticket-metric strong {
+        font-size: 1.65rem;
+    }
+
+    body.page-system-monitoring .dashboard-panel-header,
+    body.page-ticket-monitoring .dashboard-panel-header {
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+
+    body.page-system-monitoring .dashboard-panel-header h3,
+    body.page-ticket-monitoring .dashboard-panel-header h3 {
+        font-size: 1rem;
+    }
+
+    body.page-system-monitoring .dashboard-panel-header .button-link,
+    body.page-ticket-monitoring .dashboard-panel-header .button-link {
+        width: 100%;
+        min-height: 42px;
+    }
+
+    body.page-system-monitoring .dashboard-breakdown-list,
+    body.page-ticket-monitoring .dashboard-breakdown-list {
+        gap: 13px;
+    }
+
+    body.page-system-monitoring .dashboard-breakdown-row,
+    body.page-ticket-monitoring .dashboard-breakdown-row {
+        gap: 8px;
+    }
+
+    body.page-system-monitoring .dashboard-breakdown-head,
+    body.page-ticket-monitoring .dashboard-breakdown-head {
+        align-items: flex-start;
+    }
+
+    body.page-system-monitoring .dashboard-breakdown-label,
+    body.page-ticket-monitoring .dashboard-breakdown-label {
+        line-height: 1.35;
+    }
+
+    body.page-system-monitoring .dashboard-breakdown-track,
+    body.page-ticket-monitoring .dashboard-breakdown-track {
+        height: 9px;
+        border-radius: 999px;
+    }
+
+    body.page-system-monitoring .dashboard-breakdown-fill,
+    body.page-ticket-monitoring .dashboard-breakdown-fill {
+        border-radius: inherit;
+    }
+
+    body.page-system-monitoring #record-form,
+    body.page-ticket-monitoring #ticket-record-form,
+    body.page-system-monitoring .summary-filter-form,
+    body.page-ticket-monitoring .summary-filter-form {
+        width: 100%;
+    }
+
+    body.page-system-monitoring h2,
+    body.page-ticket-monitoring h2 {
+        font-size: 1.45rem;
+        line-height: 1.2;
+        overflow-wrap: anywhere;
+    }
+
+    body.page-system-monitoring form,
+    body.page-ticket-monitoring form {
+        gap: 18px;
+    }
+
+    body.page-system-monitoring .form-section,
+    body.page-ticket-monitoring .form-section {
+        padding: 20px;
+        border-radius: 22px;
+        overflow: hidden;
+    }
+
+    body.page-system-monitoring .form-section.compact-section,
+    body.page-ticket-monitoring .form-section.compact-section {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    body.page-system-monitoring .field-grid,
+    body.page-ticket-monitoring .field-grid,
+    body.page-system-monitoring .field-grid.compact,
+    body.page-ticket-monitoring .field-grid.compact,
+    body.page-system-monitoring .date-grid,
+    body.page-ticket-monitoring .date-grid,
+    body.page-system-monitoring .selector-grid,
+    body.page-ticket-monitoring .selector-grid,
+    body.page-system-monitoring .selector-grid.triple,
+    body.page-ticket-monitoring .selector-grid.triple,
+    body.page-ticket-monitoring .ticket-form-grid {
+        width: 100%;
+        max-width: 100%;
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    body.page-system-monitoring .summary-filter-grid,
+    body.page-ticket-monitoring .summary-filter-grid {
+        width: 100%;
+        max-width: 100%;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 18px;
+    }
+
+    body.page-system-monitoring .field-span-2,
+    body.page-ticket-monitoring .field-span-2,
+    body.page-ticket-monitoring .ticket-description-field {
+        grid-column: auto;
+    }
+
+    body.page-system-monitoring .field,
+    body.page-ticket-monitoring .field,
+    body.page-system-monitoring .selector-field,
+    body.page-ticket-monitoring .selector-field,
+    body.page-system-monitoring .selector-subfield,
+    body.page-ticket-monitoring .selector-subfield {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    body.page-system-monitoring .date-field,
+    body.page-ticket-monitoring .date-field {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    body.page-system-monitoring .selector-field,
+    body.page-ticket-monitoring .selector-field {
+        gap: 10px;
+    }
+
+    body.page-system-monitoring .selector-field-stack,
+    body.page-ticket-monitoring .selector-field-stack {
+        gap: 18px;
+    }
+
+    body.page-system-monitoring .option-group,
+    body.page-ticket-monitoring .option-group {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    body.page-system-monitoring .option-button,
+    body.page-ticket-monitoring .option-button {
+        min-width: 0;
+    }
+
+    body.page-system-monitoring .option-button span,
+    body.page-ticket-monitoring .option-button span {
+        width: 100%;
+        min-height: 48px;
+        padding: 11px 12px;
+        text-align: center;
+        line-height: 1.25;
+        overflow-wrap: anywhere;
+    }
+
+    body.page-system-monitoring input,
+    body.page-system-monitoring select,
+    body.page-system-monitoring textarea,
+    body.page-ticket-monitoring input,
+    body.page-ticket-monitoring select,
+    body.page-ticket-monitoring textarea {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        min-height: 48px;
+        font-size: 1rem;
+    }
+
+    body.page-system-monitoring input[type="date"],
+    body.page-system-monitoring input[type="month"],
+    body.page-ticket-monitoring input[type="date"],
+    body.page-ticket-monitoring input[type="month"] {
+        -webkit-appearance: none;
+        appearance: none;
+        inline-size: 100%;
+        min-inline-size: 0;
+        max-inline-size: 100%;
+    }
+
+    body.page-system-monitoring input[type="file"],
+    body.page-ticket-monitoring input[type="file"] {
+        min-height: 54px;
+        padding: 12px;
+        font-size: 0.92rem;
+    }
+
+    body.page-system-monitoring .buttons,
+    body.page-ticket-monitoring .buttons,
+    body.page-ticket-monitoring .ticket-form-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    body.page-system-monitoring .buttons button,
+    body.page-ticket-monitoring .buttons button,
+    body.page-ticket-monitoring .ticket-form-actions button,
+    body.page-ticket-monitoring .ticket-form-actions .button-link {
+        width: 100%;
+        min-height: 48px;
+    }
+}
+
+@media (max-width: 520px) {
+    body.page-system-monitoring,
+    body.page-ticket-monitoring {
+        padding: 12px;
+        gap: 16px;
+    }
+
+    body.page-system-monitoring .app-sidebar,
+    body.page-ticket-monitoring .app-sidebar,
+    body.page-system-monitoring .app-topbar,
+    body.page-ticket-monitoring .app-topbar {
+        border-radius: 20px;
+    }
+
+    body.page-system-monitoring .app-topbar,
+    body.page-system-monitoring .brand-block,
+    body.page-ticket-monitoring .app-topbar,
+    body.page-ticket-monitoring .brand-block {
+        padding: 18px;
+    }
+
+    body.page-system-monitoring .card,
+    body.page-ticket-monitoring .card {
+        padding: 16px;
+        border-radius: 20px;
+    }
+
+    body.page-system-monitoring .dashboard-shell,
+    body.page-ticket-monitoring .dashboard-shell {
+        padding: 0;
+    }
+
+    body.page-system-monitoring .dashboard-hero,
+    body.page-ticket-monitoring .dashboard-hero,
+    body.page-system-monitoring .dashboard-scope,
+    body.page-ticket-monitoring .dashboard-scope {
+        padding: 16px;
+        border-radius: 18px;
+    }
+
+    body.page-system-monitoring .dashboard-metric-card,
+    body.page-ticket-monitoring .dashboard-metric-card {
+        padding: 13px;
+        border-radius: 16px;
+    }
+
+    body.page-system-monitoring .dashboard-panel,
+    body.page-ticket-monitoring .dashboard-panel {
+        padding: 16px;
+        border-radius: 18px;
+    }
+
+    body.page-system-monitoring .dashboard-ticket-metric,
+    body.page-ticket-monitoring .dashboard-ticket-metric {
+        padding: 12px;
+        border-radius: 16px;
+    }
+
+    body.page-system-monitoring .dashboard-metric-total,
+    body.page-ticket-monitoring .dashboard-metric-total {
+        min-height: 104px;
+    }
+
+    body.page-system-monitoring .dashboard-metric-card,
+    body.page-ticket-monitoring .dashboard-metric-card {
+        min-height: 92px;
+    }
+
+    body.page-system-monitoring .dashboard-metric-value,
+    body.page-ticket-monitoring .dashboard-metric-value {
+        font-size: 1.65rem;
+    }
+
+    body.page-system-monitoring .dashboard-metric-total .dashboard-metric-value,
+    body.page-ticket-monitoring .dashboard-metric-total .dashboard-metric-value {
+        font-size: 2.2rem;
+    }
+
+    body.page-system-monitoring .dashboard-kicker,
+    body.page-ticket-monitoring .dashboard-kicker,
+    body.page-system-monitoring .dashboard-scope-label,
+    body.page-ticket-monitoring .dashboard-scope-label,
+    body.page-system-monitoring .dashboard-metric-label,
+    body.page-ticket-monitoring .dashboard-metric-label,
+    body.page-system-monitoring .dashboard-ticket-label,
+    body.page-ticket-monitoring .dashboard-ticket-label {
+        letter-spacing: 0.05em;
+    }
+
+    body.page-system-monitoring .dashboard-breakdown-head,
+    body.page-ticket-monitoring .dashboard-breakdown-head {
+        display: grid;
+        grid-template-columns: 1fr auto;
+    }
+
+    body.page-system-monitoring h2,
+    body.page-ticket-monitoring h2 {
+        font-size: 1.28rem;
+    }
+
+    body.page-system-monitoring .form-section,
+    body.page-ticket-monitoring .form-section {
+        padding: 18px;
+    }
+
+    body.page-system-monitoring .option-group,
+    body.page-ticket-monitoring .option-group {
+        grid-template-columns: 1fr;
+    }
+
+    body.page-system-monitoring .selector-subfield .option-group,
+    body.page-ticket-monitoring .selector-subfield .option-group,
+    body.page-system-monitoring .selector-field-medium .option-group,
+    body.page-ticket-monitoring .selector-field-medium .option-group {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    body.page-system-monitoring .selector-grid.triple .option-group,
+    body.page-ticket-monitoring .selector-grid.triple .option-group {
+        grid-template-columns: 1fr;
+    }
+
+    body.page-system-monitoring .option-button span,
+    body.page-ticket-monitoring .option-button span {
+        min-height: 46px;
+        padding: 10px 12px;
     }
 }
