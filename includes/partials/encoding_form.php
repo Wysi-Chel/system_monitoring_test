@@ -188,10 +188,6 @@ $recordFormSelectedValues = static function (string $key) use ($editingRecord): 
                 <?= iconSvg("save") ?>
                 <span class="sr-only"><?= e($recordFormSubmitLabel) ?></span>
             </button>
-            <button type="reset" class="secondary icon-button" aria-label="Clear form" title="Clear form">
-                <?= iconSvg("x") ?>
-                <span class="sr-only">Clear form</span>
-            </button>
             <?php if ($isEditingRecord && isset($recordViewUrl)): ?>
             <a href="<?= e($recordViewUrl) ?>" class="button-link secondary icon-button" aria-label="Cancel edit" title="Cancel edit">
                 <?= iconSvg("arrow-left") ?>
