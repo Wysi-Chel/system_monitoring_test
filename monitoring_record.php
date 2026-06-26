@@ -7,6 +7,8 @@ require __DIR__ . "/includes/monitoring_helpers.php";
 require __DIR__ . "/includes/monitoring_repository.php";
 
 $company = resolveCompanyConfig($_GET["company"] ?? null, $companyConfigs);
+$fixedBranch = $company["fixed_branch"] ?? null;
+$showBranchSelector = $fixedBranch === null;
 ensureMonitoringTable($pdo, $company);
 $tableNameSql = quoteMysqlIdentifier($company["table_name"]);
 
@@ -131,10 +133,6 @@ function renderMonitoringReadonlyField(string $label, string $value, string $fie
                 <h2>Find Record</h2>
                 <p class="note">Search using the ID number generated when the incident was encoded.</p>
             </div>
-            <a href="<?= e($backUrl) ?>" class="button-link secondary icon-button" aria-label="Back to summary" title="Back to summary">
-                <?= iconSvg("arrow-left") ?>
-                <span class="sr-only">Back to summary</span>
-            </a>
         </div>
 
         <form action="monitoring_record.php" method="GET" class="summary-filter-form">
@@ -201,10 +199,6 @@ function renderMonitoringReadonlyField(string $label, string $value, string $fie
                     <span class="sr-only">Edit record</span>
                 </a>
                 <?php endif; ?>
-                <a href="<?= e($backUrl) ?>" class="button-link secondary icon-button" aria-label="Return to summary" title="Return to summary">
-                    <?= iconSvg("arrow-left") ?>
-                    <span class="sr-only">Return to summary</span>
-                </a>
             </div>
         </div>
 

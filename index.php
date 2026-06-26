@@ -91,7 +91,7 @@ $activeFilterBadges = buildActiveFilterBadges($filters);
 $savedIdentificationNumber = trim((string) ($_GET["identification_number"] ?? ""));
 $savedTitle = "Record Saved";
 $savedMessage = $savedIdentificationNumber !== ""
-    ? "Record " . $savedIdentificationNumber . " successfully saved to the " . $company["table_name"] . " table."
+    ? ""
     : "";
 $validationErrorMessage = resolveMonitoringValidationErrorMessage($_GET["error"] ?? null);
 ?>

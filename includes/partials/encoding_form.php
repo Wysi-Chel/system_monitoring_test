@@ -140,13 +140,13 @@ $recordFormSelectedValues = static function (string $key) use ($editingRecord): 
                 </div>
 
                 <div class="field">
-                    <label for="approved-by">Approved By</label>
-                    <input type="text" id="approved-by" name="approved_by" value="<?= e($recordFormValue("approved_by")) ?>">
+                    <label>Approved By</label>
+                    <?php renderOptionButtons("approved_by", $approvedByOptions, false, $recordFormValue("approved_by")); ?>
                 </div>
 
                 <div class="field">
-                    <label for="processed-by">Processed By</label>
-                    <input type="text" id="processed-by" name="processed_by" value="<?= e($recordFormValue("processed_by")) ?>" placeholder="">
+                    <label>Processed By</label>
+                    <?php renderOptionButtons("processed_by", $processedByOptions, false, $recordFormValue("processed_by")); ?>
                 </div>
 
                 <div class="field field-span-2">
