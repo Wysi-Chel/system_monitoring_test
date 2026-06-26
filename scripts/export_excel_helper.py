@@ -115,6 +115,12 @@ def format_timestamp_display(value: datetime) -> str:
     suffix = "AM" if value.hour < 12 else "PM"
     return f"{value.month}/{value.day}/{value.year} {hour}:{value.minute:02d} {suffix}"
 
+def uppercase_text(value):
+    if not isinstance(value, str):
+        return value
+
+    value = re.sub(r"\s+", " ", value.strip())
+    return value.upper()
 
 def display_value(value, header):
     if value in ("", None):
@@ -215,7 +221,8 @@ def main() -> int:
     output_path = Path(sys.argv[2])
 
     payload = json.loads(payload_path.read_text(encoding="utf-8"))
-    headers = payload.get("headers", [])
+    logical_headers = payload.get("headers", [])
+    headers = [uppercase_text(header) for header in logical_headers]
     rows = payload.get("rows", [])
 
     workbook = Workbook()
@@ -229,9 +236,9 @@ def main() -> int:
     format_header_row(worksheet)
 
     for raw_row in rows:
-        row = [sentence_case_text(value) for value in raw_row]
+        row = [uppercase_text(value) for value in raw_row]
 
-        for index, header in enumerate(headers):
+        for index, header in enumerate(logical_headers):
             if index >= len(row):
                 continue
 
@@ -254,10 +261,10 @@ def main() -> int:
 
     for row_index in range(2, worksheet.max_row + 1):
         worksheet.row_dimensions[row_index].height = 22
-        for column_index, header in enumerate(headers, start=1):
+        for column_index, header in enumerate(logical_headers, start=1):
             format_body_cell(worksheet.cell(row=row_index, column=column_index), header)
 
-    apply_column_widths(worksheet, headers)
+    apply_column_widths(worksheet, logical_headers)
 
     workbook.save(output_path)
     return 0
