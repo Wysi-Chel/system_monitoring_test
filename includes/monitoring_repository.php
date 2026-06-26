@@ -44,6 +44,7 @@ function normalizeMonthFilter($value): string
     return $month && $month->format("Y-m") === $value ? $value : "";
 }
 
+
 function normalizeAllowedFilter($value, array $allowedOptions): string
 {
     $value = trim((string) $value);
@@ -85,6 +86,7 @@ function buildMonitoringFilters(array $input, array $company, array $filterOptio
         "identification_number" => normalizeIdentificationNumberFilter($input["id_number"] ?? ""),
         "user_name" => normalizeSearchFilter($input["user"] ?? $input["user_name"] ?? ""),
         "month" => normalizeMonthFilter($input["month"] ?? ""),
+        "day" => normalizeDateFilter($input["day"] ?? ""),
         "date_from" => "",
         "date_to" => "",
         "branch" => "",
@@ -193,6 +195,11 @@ function buildMonitoringWhereClause(array $filters, array &$bindings): string
             $bindings["month_start"] = $monthStart->format("Y-m-d");
             $bindings["month_end"] = $monthEnd->format("Y-m-d");
         }
+    }
+
+    if (($filters["day"] ?? "") !== "") {
+        $conditions[] = "date_recorded = :day";
+        $bindings["day"] = $filters["day"];
     }
 
     if ($filters["date_from"] !== "") {

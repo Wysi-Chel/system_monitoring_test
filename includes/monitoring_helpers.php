@@ -11,6 +11,32 @@ function uppercaseText(string $value): string
         : strtoupper($value);
 }
 
+function iconSvg(string $name): string
+{
+    $paths = [
+        "arrow-left" => '<path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path>',
+        "arrow-right" => '<path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path>',
+        "check" => '<path d="m20 6-11 11-5-5"></path>',
+        "download" => '<path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path>',
+        "edit" => '<path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>',
+        "external-link" => '<path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>',
+        "home" => '<path d="m3 11 9-8 9 8"></path><path d="M5 10v11h14V10"></path><path d="M9 21v-6h6v6"></path>',
+        "moon" => '<path d="M12 3a6 6 0 0 0 9 7.5A9 9 0 1 1 12 3Z"></path>',
+        "printer" => '<path d="M6 9V3h12v6"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 14h12v7H6z"></path>',
+        "refresh" => '<path d="M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M3 12A9 9 0 0 1 18.5 5.8"></path><path d="M3 18v-6h6"></path><path d="M21 6v6h-6"></path>',
+        "save" => '<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"></path><path d="M17 21v-8H7v8"></path><path d="M7 3v5h8"></path>',
+        "search" => '<circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path>',
+        "send" => '<path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path>',
+        "sun" => '<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path>',
+        "trash" => '<path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="m19 6-1 15H6L5 6"></path>',
+        "upload" => '<path d="M12 21V9"></path><path d="m7 14 5-5 5 5"></path><path d="M5 3h14"></path>',
+        "x" => '<path d="M18 6 6 18"></path><path d="m6 6 12 12"></path>',
+    ];
+
+    $pathMarkup = $paths[$name] ?? $paths["check"];
+    return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' . $pathMarkup . '</svg>';
+}
+
 function containsMultiValueText(?string $value, string $target): bool
 {
     $normalizedValue = trim((string) $value);
@@ -56,15 +82,21 @@ function resolveMonitoringValidationErrorMessage(?string $errorCode): ?string
         "incident_image_upload_failed" => "INCIDENT REPORT IMAGE COULD NOT BE UPLOADED.",
         "incident_image_storage_failed" => "INCIDENT REPORT IMAGE COULD NOT BE SAVED.",
         "record_save_failed" => "THE RECORD COULD NOT BE SAVED RIGHT NOW.",
+        "record_update_failed" => "THE RECORD COULD NOT BE UPDATED RIGHT NOW.",
         default => null,
     };
 }
 
-function renderOptionButtons(string $name, array $options, bool $allowMultiple = false): void
+function renderOptionButtons(string $name, array $options, bool $allowMultiple = false, $selectedValues = []): void
 {
     $groupRole = $allowMultiple ? "group" : "radiogroup";
     $inputType = $allowMultiple ? "checkbox" : "radio";
     $inputName = $allowMultiple ? $name . "[]" : $name;
+    $selectedValues = is_array($selectedValues) ? $selectedValues : [$selectedValues];
+    $selectedKeys = array_map(
+        static fn($item): string => uppercaseText(trim((string) $item)),
+        $selectedValues
+    );
 
     echo '<div class="option-group" role="' . $groupRole . '" aria-label="' . e($name) . '">';
 
@@ -74,9 +106,10 @@ function renderOptionButtons(string $name, array $options, bool $allowMultiple =
         $safeName = e($inputName);
         $safeOption = e($option);
         $displayOption = e(uppercaseText((string) $option));
+        $isChecked = in_array(uppercaseText(trim((string) $option)), $selectedKeys, true);
 
         echo '<label class="option-button" for="' . $safeId . '">';
-        echo '<input type="' . $inputType . '" id="' . $safeId . '" name="' . $safeName . '" value="' . $safeOption . '">';
+        echo '<input type="' . $inputType . '" id="' . $safeId . '" name="' . $safeName . '" value="' . $safeOption . '"' . ($isChecked ? ' checked' : '') . '>';
         echo '<span>' . $displayOption . '</span>';
         echo '</label>';
     }
@@ -112,6 +145,7 @@ function buildMonitoringListQueryParams(string $companyKey, array $filters, bool
         "identification_number" => "id_number",
         "user_name" => "user",
         "month" => "month",
+        "day" => "day",
         "date_from" => "date_from",
         "date_to" => "date_to",
         "branch" => "branch",
@@ -360,6 +394,9 @@ function buildActiveFilterBadges(array $filters, ?string $fixedBranch = null): a
 
     if (($filters["month"] ?? "") !== "") {
         $badges[] = "Month: " . formatDisplayMonth($filters["month"]);
+    }
+    if (($filters["day"] ?? "") !== "") {
+        $badges[] = "Day: " . formatDisplayDate($filters["day"]);
     }
 
     if ($fixedBranch !== null) {

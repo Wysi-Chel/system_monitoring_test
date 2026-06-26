@@ -85,7 +85,10 @@ $ticketFormDefaults = [
                 <h2>Encode Ticket Record</h2>
                 <!-- <p class="note summary-note">Enter the basic ticket details below. New ticket records are saved with an initial status of <strong>Open</strong>.</p> -->
             </div>
-            <a href="<?= e($mainPageUrl) ?>" class="button-link secondary">Back to System Monitoring</a>
+            <a href="<?= e($mainPageUrl) ?>" class="button-link secondary icon-button" aria-label="Back to system monitoring" title="Back to system monitoring">
+                <?= iconSvg("arrow-left") ?>
+                <span class="sr-only">Back to system monitoring</span>
+            </a>
         </div>
 
         <form action="save_ticket_monitoring.php" method="POST" id="ticket-record-form" class="ticket-record-form">
@@ -158,8 +161,14 @@ $ticketFormDefaults = [
             </section>
 
             <div class="buttons ticket-form-actions">
-                <button type="submit" class="primary">Save Ticket Record</button>
-                <button type="reset" class="secondary">Clear Form</button>
+                <button type="submit" class="primary icon-button" aria-label="Save ticket record" title="Save ticket record">
+                    <?= iconSvg("save") ?>
+                    <span class="sr-only">Save ticket record</span>
+                </button>
+                <button type="reset" class="secondary icon-button" aria-label="Clear form" title="Clear form">
+                    <?= iconSvg("x") ?>
+                    <span class="sr-only">Clear form</span>
+                </button>
             </div>
         </form>
     </section>
@@ -169,7 +178,10 @@ $ticketFormDefaults = [
             <div>
                 <h2>Ticket Monitoring Summary</h2>
             </div>
-            <a href="<?= e($exportUrl) ?>" class="button-link secondary">Export Filtered Excel</a>
+            <a href="<?= e($exportUrl) ?>" class="button-link secondary icon-button" aria-label="Export filtered Excel" title="Export filtered Excel">
+                <?= iconSvg("download") ?>
+                <span class="sr-only">Export filtered Excel</span>
+            </a>
         </div>
 
         <form action="ticket_monitoring.php#ticket-summary" method="GET" class="summary-filter-form">
@@ -218,8 +230,14 @@ $ticketFormDefaults = [
 
             <div class="summary-toolbar">
                 <div class="summary-actions">
-                    <button type="submit" class="primary">Apply Filters</button>
-                    <a href="<?= e($clearFiltersUrl . $ticketSummaryAnchor) ?>" class="button-link secondary">Clear Filters</a>
+                    <button type="submit" class="primary icon-button" aria-label="Apply filters" title="Apply filters">
+                        <?= iconSvg("search") ?>
+                        <span class="sr-only">Apply filters</span>
+                    </button>
+                    <a href="<?= e($clearFiltersUrl . $ticketSummaryAnchor) ?>" class="button-link secondary icon-button" aria-label="Clear filters" title="Clear filters">
+                        <?= iconSvg("x") ?>
+                        <span class="sr-only">Clear filters</span>
+                    </a>
                 </div>
 
                 <div class="results-meta">
@@ -293,7 +311,7 @@ $ticketFormDefaults = [
                                 title="Edit Status"
                                 onchange="if (this.value !== '') { this.form.submit(); }"
                             >
-                                <option value="" selected disabled>Update</option>
+                                <option value="" selected disabled>&#9881;</option>
                                 <?php foreach ($ticketStatusOptions as $option): ?>
                                     <?php if (($row["ticket_status"] ?? "") === $option) { continue; } ?>
                                 <option value="<?= e($option) ?>"><?= e($option) ?></option>
@@ -359,9 +377,15 @@ $ticketFormDefaults = [
         <?php if ($pagination["total_pages"] > 1): ?>
         <nav class="pagination" aria-label="Ticket monitoring pages">
             <?php if ($pagination["has_previous"]): ?>
-            <a href="<?= e(buildUrl("ticket_monitoring.php", $ticketQueryParams, ["page" => $pagination["page"] - 1]) . $ticketSummaryAnchor) ?>" class="button-link secondary">Previous</a>
+            <a href="<?= e(buildUrl("ticket_monitoring.php", $ticketQueryParams, ["page" => $pagination["page"] - 1]) . $ticketSummaryAnchor) ?>" class="button-link secondary icon-button" aria-label="Previous page" title="Previous page">
+                <?= iconSvg("arrow-left") ?>
+                <span class="sr-only">Previous page</span>
+            </a>
             <?php else: ?>
-            <span class="button-link secondary disabled" aria-disabled="true">Previous</span>
+            <span class="button-link secondary disabled icon-button" aria-disabled="true" aria-label="Previous page" title="Previous page">
+                <?= iconSvg("arrow-left") ?>
+                <span class="sr-only">Previous page</span>
+            </span>
             <?php endif; ?>
 
             <div class="page-numbers">
@@ -375,9 +399,15 @@ $ticketFormDefaults = [
             </div>
 
             <?php if ($pagination["has_next"]): ?>
-            <a href="<?= e(buildUrl("ticket_monitoring.php", $ticketQueryParams, ["page" => $pagination["page"] + 1]) . $ticketSummaryAnchor) ?>" class="button-link secondary">Next</a>
+            <a href="<?= e(buildUrl("ticket_monitoring.php", $ticketQueryParams, ["page" => $pagination["page"] + 1]) . $ticketSummaryAnchor) ?>" class="button-link secondary icon-button" aria-label="Next page" title="Next page">
+                <?= iconSvg("arrow-right") ?>
+                <span class="sr-only">Next page</span>
+            </a>
             <?php else: ?>
-            <span class="button-link secondary disabled" aria-disabled="true">Next</span>
+            <span class="button-link secondary disabled icon-button" aria-disabled="true" aria-label="Next page" title="Next page">
+                <?= iconSvg("arrow-right") ?>
+                <span class="sr-only">Next page</span>
+            </span>
             <?php endif; ?>
         </nav>
         <?php endif; ?>

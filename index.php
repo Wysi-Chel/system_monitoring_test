@@ -86,6 +86,7 @@ $ticketMonitoringUrl = buildUrl("ticket_monitoring.php", [
 ]);
 $clearFiltersUrl = buildUrl("index.php", ["company" => $company["key"]]);
 $exportUrl = buildUrl("export_excel.php", buildMonitoringListQueryParams($company["key"], $filters, false, $monitoringSummaryRowsPerPageOptions[0]));
+$printUrl = buildUrl("print_monitoring_summary.php", buildMonitoringListQueryParams($company["key"], $filters, false, $monitoringSummaryRowsPerPageOptions[0]));
 $activeFilterBadges = buildActiveFilterBadges($filters);
 $savedIdentificationNumber = trim((string) ($_GET["identification_number"] ?? ""));
 $savedTitle = "Record Saved";

@@ -115,10 +115,17 @@
     }
 
     if (themeToggle) {
+        var themeIconMarkup = {
+            dark: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3a6 6 0 0 0 9 7.5A9 9 0 1 1 12 3Z"></path></svg><span class="sr-only">Switch to dark mode</span>',
+            light: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg><span class="sr-only">Switch to light mode</span>'
+        };
+
         var updateThemeToggle = function () {
             var isDark = root.classList.contains("dark-theme");
-            themeToggle.textContent = isDark ? "Light Mode" : "Dark Mode";
+            themeToggle.innerHTML = isDark ? themeIconMarkup.light : themeIconMarkup.dark;
             themeToggle.setAttribute("aria-pressed", isDark ? "true" : "false");
+            themeToggle.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
+            themeToggle.setAttribute("title", isDark ? "Switch to light mode" : "Switch to dark mode");
         };
 
         themeToggle.addEventListener("click", function () {

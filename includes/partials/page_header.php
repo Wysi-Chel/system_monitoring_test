@@ -96,8 +96,14 @@ $navItems = [
 
     <div class="topbar-meta">
         <?php if (canAccessPromoteToLiveUi()): ?>
-        <a href="<?= e($promotionUrl) ?>" class="button-link secondary topbar-inline-action">Promote To Live</a>
+        <a href="<?= e($promotionUrl) ?>" class="button-link secondary topbar-inline-action icon-button" aria-label="Promote to live" title="Promote to live">
+            <?= iconSvg("upload") ?>
+            <span class="sr-only">Promote to live</span>
+        </a>
         <?php endif; ?>
-        <button type="button" class="theme-toggle" id="theme-toggle" aria-pressed="false">Dark Mode</button>
+        <button type="button" class="theme-toggle icon-button" id="theme-toggle" aria-pressed="false" aria-label="Switch to dark mode" title="Switch to dark mode">
+            <?= iconSvg("moon") ?>
+            <span class="sr-only">Switch theme</span>
+        </button>
     </div>
 </header>

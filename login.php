@@ -50,7 +50,14 @@ function loginEscape($value): string
                 <label for="login-password">Password</label>
                 <input type="password" id="login-password" name="password" autocomplete="current-password" required autofocus>
 
-                <button type="submit" class="primary">Login</button>
+                <button type="submit" class="primary icon-button" aria-label="Login" title="Login">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                        <path d="m10 17 5-5-5-5"></path>
+                        <path d="M15 12H3"></path>
+                    </svg>
+                    <span class="sr-only">Login</span>
+                </button>
             </form>
         </section>
     </main>

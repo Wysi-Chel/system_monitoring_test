@@ -13,7 +13,16 @@ $formatCardValue = static function (string $value): string {
         <div>
             <h2><?= e($company["system_name"]) ?> Summary</h2>
         </div>
-        <a href="<?= e($exportUrl) ?>" class="button-link secondary">Export Filtered Excel</a>
+        <div class="summary-actions">
+            <a href="<?= e($printUrl) ?>" class="button-link secondary icon-button" target="_blank" rel="noopener" aria-label="Print filtered records" title="Print filtered records">
+                <?= iconSvg("printer") ?>
+                <span class="sr-only">Print filtered records</span>
+            </a>
+            <a href="<?= e($exportUrl) ?>" class="button-link secondary icon-button" aria-label="Export filtered Excel" title="Export filtered Excel">
+                <?= iconSvg("download") ?>
+                <span class="sr-only">Export filtered Excel</span>
+            </a>
+        </div>
     </div>
 
     <form action="index.php#summary-section" method="GET" class="summary-filter-form">
@@ -29,6 +38,10 @@ $formatCardValue = static function (string $value): string {
             <div class="field">
                 <label for="filter-month">Month</label>
                 <input type="month" id="filter-month" name="month" value="<?= e($filters["month"] ?? "") ?>">
+            </div>
+            <div class="field">
+                <label for="filter-day">Day</label>
+                <input type="date" id="filter-day" name="day" value="<?= e($filters["day"] ?? "") ?>">
             </div>
 
             <?php if ($showBranchSelector): ?>
@@ -88,8 +101,14 @@ $formatCardValue = static function (string $value): string {
 
         <div class="summary-toolbar">
             <div class="summary-actions">
-                <button type="submit" class="primary">Apply Filters</button>
-                <a href="<?= e($clearFiltersUrl . $summaryAnchor) ?>" class="button-link secondary">Clear Filters</a>
+                <button type="submit" class="primary icon-button" aria-label="Apply filters" title="Apply filters">
+                    <?= iconSvg("search") ?>
+                    <span class="sr-only">Apply filters</span>
+                </button>
+                <a href="<?= e($clearFiltersUrl . $summaryAnchor) ?>" class="button-link secondary icon-button" aria-label="Clear filters" title="Clear filters">
+                    <?= iconSvg("x") ?>
+                    <span class="sr-only">Clear filters</span>
+                </a>
             </div>
 
             <div class="results-meta">
@@ -120,6 +139,12 @@ $formatCardValue = static function (string $value): string {
             $identificationNumber = trim((string) ($row["identification_number"] ?? ""));
             $recordUrl = $identificationNumber !== ""
                 ? buildUrl("monitoring_record.php", $listQueryParams, ["identification_number" => $identificationNumber])
+                : "";
+            $editRecordUrl = $identificationNumber !== ""
+                ? buildUrl("monitoring_record.php", $listQueryParams, [
+                    "identification_number" => $identificationNumber,
+                    "edit" => 1,
+                ])
                 : "";
             $titleValue = trim((string) formatSummaryValue(["key" => "user_name", "format" => "text"], $row));
             if ($titleValue === "") {
@@ -172,11 +197,18 @@ $formatCardValue = static function (string $value): string {
                 </div>
 
                 <div class="summary-card-action">
+                    <?php if ($editRecordUrl !== ""): ?>
+                    <a href="<?= e($editRecordUrl) ?>" class="button-link secondary icon-button summary-card-edit-link" aria-label="Edit record" title="Edit record">
+                        <?= iconSvg("edit") ?>
+                        <span class="sr-only">Edit record</span>
+                    </a>
+                    <?php endif; ?>
                     <?php if ($rowActionOptions !== []): ?>
                     <form action="update_monitoring_action.php" method="POST" class="monitoring-action-form">
                         <input type="hidden" name="company" value="<?= e($company["key"]) ?>">
                         <input type="hidden" name="record_id" value="<?= e($row["id"] ?? "") ?>">
                         <input type="hidden" name="filter_month" value="<?= e($filters["month"] ?? "") ?>">
+                        <input type="hidden" name="filter_day" value="<?= e($filters["day"] ?? "") ?>">
                         <input type="hidden" name="filter_branch" value="<?= e($filters["branch"] ?? "") ?>">
                         <input type="hidden" name="filter_dealer" value="<?= e($filters["dealer"] ?? "") ?>">
                         <input type="hidden" name="filter_identification_number" value="<?= e($filters["identification_number"] ?? "") ?>">
@@ -192,7 +224,7 @@ $formatCardValue = static function (string $value): string {
                             title="Choose Action"
                             onchange="if (this.value !== '') { this.form.submit(); }"
                         >
-                            <option value="" selected disabled>Action</option>
+                            <option value="" selected disabled>&#9881;</option>
                             <?php foreach ($rowActionOptions as $option): ?>
                             <option value="<?= e($option) ?>"><?= e($option) ?></option>
                             <?php endforeach; ?>
@@ -262,9 +294,15 @@ $formatCardValue = static function (string $value): string {
     <?php if ($pagination["total_pages"] > 1): ?>
     <nav class="pagination" aria-label="Summary pages">
         <?php if ($pagination["has_previous"]): ?>
-        <a href="<?= e(buildUrl("index.php", $listQueryParams, ["page" => $pagination["page"] - 1]) . $summaryAnchor) ?>" class="button-link secondary">Previous</a>
+        <a href="<?= e(buildUrl("index.php", $listQueryParams, ["page" => $pagination["page"] - 1]) . $summaryAnchor) ?>" class="button-link secondary icon-button" aria-label="Previous page" title="Previous page">
+            <?= iconSvg("arrow-left") ?>
+            <span class="sr-only">Previous page</span>
+        </a>
         <?php else: ?>
-        <span class="button-link secondary disabled" aria-disabled="true">Previous</span>
+        <span class="button-link secondary disabled icon-button" aria-disabled="true" aria-label="Previous page" title="Previous page">
+            <?= iconSvg("arrow-left") ?>
+            <span class="sr-only">Previous page</span>
+        </span>
         <?php endif; ?>
 
         <div class="page-numbers">
@@ -278,9 +316,15 @@ $formatCardValue = static function (string $value): string {
         </div>
 
         <?php if ($pagination["has_next"]): ?>
-        <a href="<?= e(buildUrl("index.php", $listQueryParams, ["page" => $pagination["page"] + 1]) . $summaryAnchor) ?>" class="button-link secondary">Next</a>
+        <a href="<?= e(buildUrl("index.php", $listQueryParams, ["page" => $pagination["page"] + 1]) . $summaryAnchor) ?>" class="button-link secondary icon-button" aria-label="Next page" title="Next page">
+            <?= iconSvg("arrow-right") ?>
+            <span class="sr-only">Next page</span>
+        </a>
         <?php else: ?>
-        <span class="button-link secondary disabled" aria-disabled="true">Next</span>
+        <span class="button-link secondary disabled icon-button" aria-disabled="true" aria-label="Next page" title="Next page">
+            <?= iconSvg("arrow-right") ?>
+            <span class="sr-only">Next page</span>
+        </span>
         <?php endif; ?>
     </nav>
     <?php endif; ?>

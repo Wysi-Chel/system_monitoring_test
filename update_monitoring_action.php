@@ -20,6 +20,7 @@ $redirectParams = [
 ];
 
 $filterMonth = trim((string) ($_POST["filter_month"] ?? ""));
+$filterDay = trim((string) ($_POST["filter_day"] ?? ""));
 $filterBranch = trim((string) ($_POST["filter_branch"] ?? ""));
 $filterDealer = trim((string) ($_POST["filter_dealer"] ?? ""));
 $filterIdentificationNumber = trim((string) ($_POST["filter_identification_number"] ?? ""));
@@ -31,6 +32,9 @@ $filterPage = trim((string) ($_POST["filter_page"] ?? ""));
 
 if ($filterMonth !== "") {
     $redirectParams["month"] = $filterMonth;
+}
+if ($filterDay !== "") {
+    $redirectParams["day"] = $filterDay;
 }
 
 if ($filterBranch !== "") {

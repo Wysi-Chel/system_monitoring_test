@@ -15,7 +15,7 @@ ensureTicketMonitoringTable($pdo, $company);
 
 $filterOptions = [
     "branch" => $branchOptions,
-    "dealer" => $dealerOptions,
+    "dealer" => $dealerOptions, 
     "status" => $ticketStatusOptions,
     "per_page" => $rowsPerPageOptions,
 ];

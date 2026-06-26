@@ -115,7 +115,10 @@ $primaryActionLabel = $didApplyPromotion ? "Promotion Result" : "Promotion Previ
                 <h2><?= e($primaryActionLabel) ?></h2>
                 <p class="note">This page runs only on the test server and promotes code into <code>localhost/system_monitoring</code>.</p>
             </div>
-            <a href="<?= e($backUrl) ?>" class="button-link secondary">Back to Summary</a>
+            <a href="<?= e($backUrl) ?>" class="button-link secondary icon-button" aria-label="Back to summary" title="Back to summary">
+                <?= iconSvg("arrow-left") ?>
+                <span class="sr-only">Back to summary</span>
+            </a>
         </div>
 
         <div class="promotion-meta">
@@ -128,10 +131,16 @@ $primaryActionLabel = $didApplyPromotion ? "Promotion Result" : "Promotion Previ
         <pre class="promotion-log<?= $promotionSucceeded ? " success" : " error" ?>"><?= e($promotionResult["output"] ?? "") ?></pre>
 
         <div class="buttons">
-            <a href="<?= e(buildUrl("promote_to_live.php", ["company" => $company["key"]])) ?>" class="button-link secondary">Refresh Preview</a>
+            <a href="<?= e(buildUrl("promote_to_live.php", ["company" => $company["key"]])) ?>" class="button-link secondary icon-button" aria-label="Refresh preview" title="Refresh preview">
+                <?= iconSvg("refresh") ?>
+                <span class="sr-only">Refresh preview</span>
+            </a>
             <form action="promote_to_live.php" method="POST" class="inline-button-form" onsubmit="return confirm('Promote the current test changes to the live server now?');">
                 <input type="hidden" name="company" value="<?= e($company["key"]) ?>">
-                <button type="submit" class="primary">Promote To Live</button>
+                <button type="submit" class="primary icon-button" aria-label="Promote to live" title="Promote to live">
+                    <?= iconSvg("upload") ?>
+                    <span class="sr-only">Promote to live</span>
+                </button>
             </form>
         </div>
     </section>

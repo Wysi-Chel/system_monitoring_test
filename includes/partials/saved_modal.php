@@ -10,7 +10,10 @@ $savedModalButtonLabel = trim((string) ($savedButtonLabel ?? "OK"));
             <h3 class="modal-title" id="saved-modal-title"><?= e($savedModalTitle) ?></h3>
             <p class="modal-message" id="saved-modal-message"><?= e($savedModalMessage) ?></p>
             <div class="modal-actions">
-                <button type="button" class="primary modal-button" id="saved-modal-ok"><?= e($savedModalButtonLabel) ?></button>
+                <button type="button" class="primary modal-button icon-button" id="saved-modal-ok" aria-label="<?= e($savedModalButtonLabel) ?>" title="<?= e($savedModalButtonLabel) ?>">
+                    <?= iconSvg("check") ?>
+                    <span class="sr-only"><?= e($savedModalButtonLabel) ?></span>
+                </button>
             </div>
         </div>
     </div>

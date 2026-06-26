@@ -25,7 +25,10 @@ if (!empty($filters["escalation_only"])) {
     $records = filterEscalationCandidateMonitoringRecords($records);
 }
 
-$headers = getSummaryHeaders($summaryColumns);
+$headers = array_map(
+    static fn(string $header): string => uppercaseText($header),
+    getSummaryHeaders($summaryColumns)
+);
 
 $rows = [];
 foreach ($records as $row) {
@@ -35,7 +38,7 @@ foreach ($records as $row) {
         $value = $row[$column["key"]] ?? "";
 
         if (($column["format"] ?? "text") === "action_control") {
-            $rowValues[] = $row["disciplinary_action"] ?? "";
+            $rowValues[] = uppercaseText((string) ($row["disciplinary_action"] ?? ""));
             continue;
         }
 
@@ -49,7 +52,7 @@ foreach ($records as $row) {
             continue;
         }
 
-        $rowValues[] = $value;
+        $rowValues[] = uppercaseText((string) $value);
     }
 
     $rows[] = $rowValues;
@@ -58,7 +61,7 @@ foreach ($records as $row) {
 $filename = $company["export_slug"] . "_system_monitoring_summary_" . date("Ymd_His") . ".xlsx";
 
 try {
-    $tempFile = buildXlsxFile($company["system_name"] . " Summary", $headers, $rows);
+    $tempFile = buildXlsxFile(uppercaseText($company["system_name"] . " Summary"), $headers, $rows);
     downloadXlsxFile($tempFile, $filename);
 } catch (Throwable $e) {
     error_log(sprintf(

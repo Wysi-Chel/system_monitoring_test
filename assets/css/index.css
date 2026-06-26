@@ -1354,6 +1354,14 @@ button,
     max-width: 148px;
 }
 
+.summary-card-edit-link {
+    min-height: 38px;
+    padding: 8px 11px;
+    border-radius: 12px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+}
+
 .summary-card-ticket .status-pill {
     min-width: 68px;
     padding: 3px 7px;
@@ -1927,6 +1935,15 @@ html.dark-theme .status-pill-closed {
     gap: 16px;
 }
 
+.record-edit-panel {
+    display: grid;
+    gap: 16px;
+}
+
+.form-field-note {
+    margin: 8px 0 0;
+}
+
 .record-top-grid {
     grid-template-columns: repeat(3, minmax(180px, 240px));
     justify-content: start;
@@ -1998,6 +2015,181 @@ html.dark-theme .status-pill-closed {
     max-height: 80vh;
     object-fit: contain;
     background: var(--surface);
+}
+
+.page-print-summary main {
+    max-width: none;
+    padding: 14px;
+    background: #ffffff;
+}
+
+.print-summary-card {
+    margin: 0;
+    color: #111111;
+    background: #ffffff;
+}
+
+.worksheet-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 12px;
+}
+
+.worksheet-heading {
+    margin-bottom: 8px;
+    color: #111111;
+    font-family: Arial, sans-serif;
+}
+
+.worksheet-heading h1 {
+    margin: 0 0 4px;
+    color: #111111;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.1;
+    letter-spacing: 0;
+}
+
+.worksheet-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    color: #111111;
+    font-size: 9px;
+    font-weight: bold;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+.print-summary-table-wrapper {
+    overflow: visible;
+    border: 0;
+    background: #ffffff;
+}
+
+.print-summary-table {
+    width: 100%;
+    min-width: 0;
+    border-collapse: collapse;
+    table-layout: fixed;
+    color: #111111;
+    font-family: Arial, sans-serif;
+    font-size: 7px;
+    line-height: 1.1;
+    text-transform: uppercase;
+}
+
+.print-summary-table th,
+.print-summary-table td {
+    padding: 2px 3px;
+    border: 1px solid #444444;
+    background: #ffffff;
+    color: #111111;
+    vertical-align: top;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.print-summary-table th {
+    background: #e9e9e9;
+    font-weight: bold;
+    text-align: center;
+}
+
+.worksheet-empty {
+    padding: 10px;
+    border: 1px solid #444444;
+    color: #111111;
+    font-size: 10px;
+    font-weight: bold;
+    text-align: center;
+}
+
+@media print {
+    @page {
+        size: landscape;
+        margin: 6mm;
+    }
+
+    html,
+    body {
+        background: #ffffff;
+        color: #000000;
+        font-family: Arial, sans-serif;
+    }
+
+    .no-print,
+    .app-sidebar,
+    .app-topbar,
+    header {
+        display: none !important;
+    }
+
+    main {
+        max-width: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .card,
+    .print-summary-card {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        box-shadow: none;
+        background: #ffffff;
+    }
+
+    .worksheet-heading {
+        margin-bottom: 5px;
+    }
+
+    .worksheet-heading h1 {
+        margin-bottom: 3px;
+        font-size: 11px;
+    }
+
+    .worksheet-meta {
+        gap: 4px 10px;
+        font-size: 6.5px;
+    }
+
+    .table-wrapper {
+        overflow: visible;
+        border: 0;
+    }
+
+    .print-summary-table {
+        width: 100%;
+        min-width: 0;
+        border-collapse: collapse;
+        table-layout: fixed;
+        font-size: 5.7px;
+        line-height: 1.05;
+    }
+
+    .print-summary-table th,
+    .print-summary-table td {
+        padding: 1px 2px;
+        border: 0.5pt solid #555555;
+        background: #ffffff;
+        color: #000000;
+        white-space: normal;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+    }
+
+    .print-summary-table th {
+        background: #eeeeee;
+        text-align: center;
+    }
+
+    .worksheet-empty {
+        padding: 6px;
+        border: 0.5pt solid #555555;
+        font-size: 8px;
+    }
 }
 
 @media (max-width: 1100px) {
@@ -3773,5 +3965,294 @@ body.page-ticket-monitoring .header-kicker-row {
     body.page-ticket-monitoring .option-button span {
         min-height: 46px;
         padding: 10px 12px;
+    }
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.icon-button {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    min-height: 40px;
+    padding: 0;
+    border-radius: 12px;
+    flex: 0 0 auto;
+    gap: 0;
+    overflow: hidden;
+    font-size: 0;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.icon-button svg {
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+body.page-system-monitoring .icon-button,
+body.page-ticket-monitoring .icon-button {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    min-height: 40px;
+    padding: 0;
+    border-radius: 12px;
+}
+
+body.page-system-monitoring .icon-button svg,
+body.page-ticket-monitoring .icon-button svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+body.page-system-monitoring .summary-card-edit-link {
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
+    min-height: 36px;
+    border-radius: 10px;
+}
+
+body.page-system-monitoring .summary-card-edit-link svg {
+    width: 16px;
+    height: 16px;
+}
+
+body.page-system-monitoring .summary-card-monitoring .summary-action-select {
+    width: 42px;
+    min-width: 42px;
+    max-width: 42px;
+    height: 36px;
+    min-height: 36px;
+    padding: 0 10px;
+    border-radius: 10px;
+    font-size: 15px;
+    line-height: 1;
+    text-align: center;
+    text-align-last: center;
+}
+
+body.page-system-monitoring .summary-card-monitoring .summary-action-select:focus {
+    width: 136px;
+    min-width: 136px;
+    max-width: 136px;
+    padding: 8px 28px 8px 10px;
+    font-size: 11px;
+    text-align: left;
+    text-align-last: left;
+}
+
+body.page-ticket-monitoring .summary-card-ticket .ticket-status-select {
+    width: 42px;
+    min-width: 42px;
+    max-width: 42px;
+    height: 36px;
+    min-height: 36px;
+    padding: 0 10px;
+    border-radius: 10px;
+    font-size: 15px;
+    line-height: 1;
+    text-align: center;
+    text-align-last: center;
+}
+
+body.page-ticket-monitoring .summary-card-ticket .ticket-status-select:focus {
+    width: 136px;
+    min-width: 136px;
+    max-width: 136px;
+    padding: 8px 28px 8px 10px;
+    font-size: 11px;
+    text-align: left;
+    text-align-last: left;
+}
+
+body.page-system-monitoring .topbar-inline-action.icon-button,
+body.page-ticket-monitoring .topbar-inline-action.icon-button,
+body.page-system-monitoring .theme-toggle.icon-button,
+body.page-ticket-monitoring .theme-toggle.icon-button {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    min-height: 40px;
+    padding: 0;
+    border-radius: 12px;
+}
+
+body.page-system-monitoring .sidebar-action,
+body.page-ticket-monitoring .sidebar-action {
+    align-items: flex-start;
+}
+
+body.page-system-monitoring .sidebar-action .icon-button,
+body.page-ticket-monitoring .sidebar-action .icon-button {
+    width: 42px;
+    min-width: 42px;
+}
+
+@media (max-width: 700px) {
+    body.page-system-monitoring .icon-button,
+    body.page-ticket-monitoring .icon-button,
+    body.page-system-monitoring .buttons button.icon-button,
+    body.page-ticket-monitoring .buttons button.icon-button,
+    body.page-system-monitoring .buttons .button-link.icon-button,
+    body.page-ticket-monitoring .buttons .button-link.icon-button,
+    body.page-system-monitoring .topbar-inline-action.icon-button,
+    body.page-ticket-monitoring .topbar-inline-action.icon-button,
+    body.page-system-monitoring .theme-toggle.icon-button,
+    body.page-ticket-monitoring .theme-toggle.icon-button,
+    body.page-ticket-monitoring .ticket-form-actions button.icon-button,
+    body.page-ticket-monitoring .ticket-form-actions .button-link.icon-button {
+        width: 44px;
+        min-width: 44px;
+        height: 44px;
+        min-height: 44px;
+    }
+
+    body.page-system-monitoring .buttons,
+    body.page-ticket-monitoring .buttons,
+    body.page-ticket-monitoring .ticket-form-actions {
+        display: flex;
+        flex-wrap: wrap;
+        grid-template-columns: none;
+    }
+}
+
+body.page-system-monitoring.page-print-summary {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-soft: #ffffff;
+    --surface-strong: #ffffff;
+    --text: #000000;
+    --text-soft: #000000;
+    --text-muted: #000000;
+    --border: #555555;
+    --border-strong: #444444;
+    display: block;
+    min-height: 100vh;
+    padding: 0;
+    background: #ffffff;
+    color: #000000;
+    overflow-x: visible;
+}
+
+html.dark-theme body.page-system-monitoring.page-print-summary {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-soft: #ffffff;
+    --surface-strong: #ffffff;
+    --text: #000000;
+    --text-soft: #000000;
+    --text-muted: #000000;
+    --border: #555555;
+    --border-strong: #444444;
+    background: #ffffff;
+    color: #000000;
+}
+
+body.page-system-monitoring.page-print-summary::before,
+body.page-system-monitoring.page-print-summary::after {
+    content: none;
+}
+
+body.page-system-monitoring.page-print-summary main {
+    display: block;
+    grid-area: auto;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin: 0;
+    padding: 10px;
+    background: #ffffff;
+}
+
+body.page-system-monitoring.page-print-summary .print-summary-card {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: #ffffff;
+    box-shadow: none;
+}
+
+body.page-system-monitoring.page-print-summary .print-summary-table-wrapper {
+    width: 100%;
+    max-width: none;
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+}
+
+body.page-system-monitoring.page-print-summary .print-summary-table {
+    width: 100%;
+    min-width: 0;
+    table-layout: fixed;
+    font-size: 6.2px;
+    line-height: 1.04;
+}
+
+body.page-system-monitoring.page-print-summary .print-summary-table th,
+body.page-system-monitoring.page-print-summary .print-summary-table td {
+    padding: 1px 2px;
+}
+
+body.page-system-monitoring.page-print-summary .worksheet-toolbar,
+body.page-system-monitoring.page-print-summary .worksheet-heading,
+body.page-system-monitoring.page-print-summary .worksheet-meta,
+body.page-system-monitoring.page-print-summary .print-summary-table,
+body.page-system-monitoring.page-print-summary .print-summary-table th,
+body.page-system-monitoring.page-print-summary .print-summary-table td {
+    color: #000000;
+}
+
+@media print {
+    body.page-system-monitoring.page-print-summary {
+        display: block;
+        padding: 0;
+        background: #ffffff;
+    }
+
+    body.page-system-monitoring.page-print-summary main {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    body.page-system-monitoring.page-print-summary .print-summary-table {
+        width: 100%;
+        font-size: 5px;
+        line-height: 1;
+    }
+
+    body.page-system-monitoring.page-print-summary .worksheet-heading h1 {
+        font-size: 10px;
+    }
+
+    body.page-system-monitoring.page-print-summary .worksheet-meta {
+        font-size: 6px;
     }
 }
