@@ -26,6 +26,7 @@ $filterDealer = trim((string) ($_POST["filter_dealer"] ?? ""));
 $filterIdentificationNumber = trim((string) ($_POST["filter_identification_number"] ?? ""));
 $filterUserName = trim((string) ($_POST["filter_user_name"] ?? ""));
 $filterStatus = trim((string) ($_POST["filter_status"] ?? ""));
+$filterAction = trim((string) ($_POST["filter_action"] ?? ""));
 $filterDataCorrection = trim((string) ($_POST["filter_data_correction"] ?? ""));
 $filterEscalation = trim((string) ($_POST["filter_escalation"] ?? ""));
 $filterPage = trim((string) ($_POST["filter_page"] ?? ""));
@@ -57,6 +58,10 @@ if ($filterStatus !== "") {
     $redirectParams["status"] = $filterStatus;
 }
 
+if ($filterAction !== "") {
+    $redirectParams["action"] = $filterAction;
+}
+
 if ($filterDataCorrection === "1") {
     $redirectParams["data_correction"] = 1;
 }
@@ -80,8 +85,8 @@ if ($recordId > 0 && $disciplinaryAction !== "") {
 
             if (
                 $enrichedRecord !== null
-                && containsMultiValueText((string) ($enrichedRecord["processed_type"] ?? ""), "Data Correction")
-                && (int) ($enrichedRecord["data_correction_offense_count"] ?? 0) >= 3
+                && uppercaseText(trim((string) ($enrichedRecord["classification"] ?? ""))) === uppercaseText("User Error")
+                && (int) ($enrichedRecord["data_correction_offense_count"] ?? 0) >= 1
             ) {
                 updateMonitoringRecordActionTaken($pdo, $tableNameSql, $recordId, $disciplinaryAction);
             }

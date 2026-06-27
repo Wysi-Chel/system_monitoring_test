@@ -20,6 +20,7 @@ function iconSvg(string $name): string
         "download" => '<path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path>',
         "edit" => '<path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>',
         "external-link" => '<path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>',
+        "file-text" => '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"></path><path d="M14 2v6h6"></path><path d="M16 13H8"></path><path d="M16 17H8"></path><path d="M10 9H8"></path>',
         "home" => '<path d="m3 11 9-8 9 8"></path><path d="M5 10v11h14V10"></path><path d="M9 21v-6h6v6"></path>',
         "moon" => '<path d="M12 3a6 6 0 0 0 9 7.5A9 9 0 1 1 12 3Z"></path>',
         "printer" => '<path d="M6 9V3h12v6"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 14h12v7H6z"></path>',
@@ -76,7 +77,8 @@ function splitMultiValueText(?string $value): array
 function resolveMonitoringValidationErrorMessage(?string $errorCode): ?string
 {
     return match (trim((string) $errorCode)) {
-        "data_correction_user_required" => "USER IS REQUIRED WHEN PROCESSED TYPE INCLUDES DATA CORRECTION.",
+        "data_correction_user_required" => "USER IS REQUIRED WHEN CLASSIFICATION IS USER ERROR.",
+        "user_error_user_required" => "USER IS REQUIRED WHEN CLASSIFICATION IS USER ERROR.",
         "incident_image_invalid_type" => "ONLY JPG, PNG, WEBP, OR GIF INCIDENT REPORT IMAGES ARE ALLOWED.",
         "incident_image_too_large" => "INCIDENT REPORT IMAGE MUST BE 5 MB OR SMALLER.",
         "incident_image_upload_failed" => "INCIDENT REPORT IMAGE COULD NOT BE UPLOADED.",
@@ -146,6 +148,7 @@ function buildMonitoringListQueryParams(string $companyKey, array $filters, bool
         "user_name" => "user",
         "month" => "month",
         "day" => "day",
+        "disciplinary_action" => "action",
         "date_from" => "date_from",
         "date_to" => "date_to",
         "branch" => "branch",
@@ -305,6 +308,7 @@ function formatSummaryValue(array $column, array $row): string
 {
     $value = $row[$column["key"]] ?? "";
     $uppercaseSummaryKeys = ["identification_number", "user_name", "client_name", "reason", "processed_type", "classification", "status", "offense", "disciplinary_action", "action_taken"];
+    $columnKey = (string) ($column["key"] ?? "");
 
     switch ($column["format"] ?? "text") {
         case "date":
@@ -324,14 +328,46 @@ function formatSummaryValue(array $column, array $row): string
             return formatTicketAgeValue($row);
 
         default:
-            $textValue = (string) $value;
+            $textValue = $columnKey === "processed_type"
+                ? formatMonitoringProcessedTypeDisplayValue($row)
+                : (string) $value;
 
-            if (in_array((string) ($column["key"] ?? ""), $uppercaseSummaryKeys, true)) {
+            if (in_array($columnKey, $uppercaseSummaryKeys, true)) {
                 return uppercaseText($textValue);
             }
 
             return $textValue;
     }
+}
+
+function formatMonitoringProcessedTypeDisplayValue(array $row): string
+{
+    $processedTypeValue = trim((string) ($row["processed_type"] ?? ""));
+    if ($processedTypeValue === "") {
+        return "";
+    }
+
+    if (uppercaseText(trim((string) ($row["classification"] ?? ""))) !== uppercaseText("User Error")) {
+        return $processedTypeValue;
+    }
+
+    $processedTypeValues = splitMultiValueText($processedTypeValue);
+    if ($processedTypeValues === []) {
+        return "";
+    }
+
+    $displayValues = [];
+    foreach ($processedTypeValues as $processedType) {
+        $displayValue = containsMultiValueText($processedType, "Data Correction")
+            ? "User Error"
+            : $processedType;
+
+        if (!in_array($displayValue, $displayValues, true)) {
+            $displayValues[] = $displayValue;
+        }
+    }
+
+    return implode(", ", $displayValues);
 }
 
 function resolveDataCorrectionDisciplinaryAction(int $count): array
@@ -343,31 +379,31 @@ function resolveDataCorrectionDisciplinaryAction(int $count): array
         ];
     }
 
-    $alertMessage = "Data Correction Errors: {$count}";
+    $alertMessage = "User Error Count: {$count}";
+
+    if ($count >= 5) {
+        return [
+            "data_correction_alert" => $alertMessage . " - Final memo threshold",
+            "disciplinary_action" => "Final Memo",
+        ];
+    }
 
     if ($count > 3) {
         return [
-            "data_correction_alert" => $alertMessage . " - Exceeded 3-error limit",
+            "data_correction_alert" => $alertMessage . " - Written memo threshold",
             "disciplinary_action" => "Written Memo",
         ];
     }
 
-    if ($count === 3) {
-        return [
-            "data_correction_alert" => $alertMessage . " - Reached 3-error limit",
-            "disciplinary_action" => "Vocal Memo",
-        ];
-    }
-
     return [
-        "data_correction_alert" => $alertMessage,
-        "disciplinary_action" => "",
+        "data_correction_alert" => $alertMessage . " - Verbal memo threshold",
+        "disciplinary_action" => "Verbal Memo",
     ];
 }
 
 function getMonitoringActionOptions(): array
 {
-    return ["Vocal Memo", "Written Memo"];
+    return ["Verbal Memo", "Written Memo", "Final Memo"];
 }
 
 function getMonitoringDoneStatus(): string
@@ -421,12 +457,16 @@ function buildActiveFilterBadges(array $filters, ?string $fixedBranch = null): a
         $badges[] = "Status: " . $filters["status"];
     }
 
+    if (($filters["disciplinary_action"] ?? "") !== "") {
+        $badges[] = "Action: " . $filters["disciplinary_action"];
+    }
+
     if (!empty($filters["data_correction_only"])) {
-        $badges[] = "Processed Type: Data Correction";
+        $badges[] = "Classification: User Error";
     }
 
     if (!empty($filters["escalation_only"])) {
-        $badges[] = "Escalation Candidates";
+        $badges[] = "Action Items";
     }
 
     return $badges;
@@ -434,8 +474,8 @@ function buildActiveFilterBadges(array $filters, ?string $fixedBranch = null): a
 
 function isEscalationCandidateMonitoringRecord(array $row): bool
 {
-    return containsMultiValueText((string) ($row["processed_type"] ?? ""), "Data Correction")
-        && (int) ($row["data_correction_offense_count"] ?? 0) >= 3;
+    return uppercaseText(trim((string) ($row["classification"] ?? ""))) === uppercaseText("User Error")
+        && (int) ($row["data_correction_offense_count"] ?? 0) >= 1;
 }
 
 function filterEscalationCandidateMonitoringRecords(array $records): array
@@ -559,11 +599,11 @@ function buildMonitoringDashboardData(
             }
         }
 
-        if (containsMultiValueText($processedTypeValue, "Data Correction")) {
+        if (uppercaseText($classificationValue) === uppercaseText("User Error")) {
             $metrics["data_correction_records"]++;
         }
 
-        if (((int) ($row["data_correction_offense_count"] ?? 0)) >= 3) {
+        if (((int) ($row["data_correction_offense_count"] ?? 0)) >= 1) {
             $metrics["escalation_records"]++;
         }
 

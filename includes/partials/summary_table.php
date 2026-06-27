@@ -97,6 +97,16 @@ $formatCardValue = static function (string $value): string {
                     <?php endforeach; ?>
                 </select>
             </div>
+
+            <div class="field">
+                <label for="filter-action">Action</label>
+                <select id="filter-action" name="action">
+                    <option value="">All actions</option>
+                    <?php foreach ($monitoringActionOptions as $option): ?>
+                    <option value="<?= e($option) ?>"<?= ($filters["disciplinary_action"] ?? "") === $option ? " selected" : "" ?>><?= e($option) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
         </div>
 
         <div class="summary-toolbar">
@@ -146,6 +156,12 @@ $formatCardValue = static function (string $value): string {
                     "edit" => 1,
                 ])
                 : "";
+            $memoRecordUrl = $identificationNumber !== ""
+                ? buildUrl("export_memo_docx.php", [
+                    "company" => $company["key"],
+                    "identification_number" => $identificationNumber,
+                ])
+                : "";
             $titleValue = trim((string) formatSummaryValue(["key" => "user_name", "format" => "text"], $row));
             if ($titleValue === "") {
                 $titleValue = trim((string) formatSummaryValue(["key" => "client_name", "format" => "text"], $row));
@@ -161,7 +177,7 @@ $formatCardValue = static function (string $value): string {
                 trim((string) formatSummaryValue(["key" => "branch", "format" => "text"], $row)),
             ]);
             $statusTags = splitMultiValueText((string) ($row["status"] ?? ""));
-            $processedTypeTags = splitMultiValueText((string) ($row["processed_type"] ?? ""));
+            $processedTypeTags = splitMultiValueText(formatMonitoringProcessedTypeDisplayValue($row));
             $classificationValue = trim((string) formatSummaryValue(["key" => "classification", "format" => "text"], $row));
             $ticketValue = trim((string) formatSummaryValue(["key" => "ticket", "format" => "text"], $row));
             $offenseValue = $formattedDisciplinaryAction !== ""
@@ -173,7 +189,7 @@ $formatCardValue = static function (string $value): string {
                 $rowActionOptions[] = $monitoringDoneStatus;
             }
 
-            if (((int) ($row["data_correction_offense_count"] ?? 0)) >= 3) {
+            if (((int) ($row["data_correction_offense_count"] ?? 0)) >= 1) {
                 foreach ($monitoringActionOptions as $option) {
                     if (!in_array($option, $rowActionOptions, true)) {
                         $rowActionOptions[] = $option;
@@ -181,7 +197,7 @@ $formatCardValue = static function (string $value): string {
                 }
             }
             ?>
-        <article class="summary-card summary-card-monitoring<?= ((int) ($row["data_correction_offense_count"] ?? 0)) >= 3 ? " summary-card-alert" : "" ?>">
+        <article class="summary-card summary-card-monitoring<?= ((int) ($row["data_correction_offense_count"] ?? 0)) >= 1 ? " summary-card-alert" : "" ?>">
             <div class="summary-card-header">
                 <div class="summary-card-main">
                     <?php if ($recordUrl !== ""): ?>
@@ -203,6 +219,12 @@ $formatCardValue = static function (string $value): string {
                         <span class="sr-only">Edit record</span>
                     </a>
                     <?php endif; ?>
+                    <?php if ($memoRecordUrl !== ""): ?>
+                    <a href="<?= e($memoRecordUrl) ?>" class="button-link secondary icon-button summary-card-edit-link" aria-label="Download draft memo" title="Download draft memo">
+                        <?= iconSvg("file-text") ?>
+                        <span class="sr-only">Download draft memo</span>
+                    </a>
+                    <?php endif; ?>
                     <?php if ($rowActionOptions !== []): ?>
                     <form action="update_monitoring_action.php" method="POST" class="monitoring-action-form">
                         <input type="hidden" name="company" value="<?= e($company["key"]) ?>">
@@ -214,6 +236,7 @@ $formatCardValue = static function (string $value): string {
                         <input type="hidden" name="filter_identification_number" value="<?= e($filters["identification_number"] ?? "") ?>">
                         <input type="hidden" name="filter_user_name" value="<?= e($filters["user_name"] ?? "") ?>">
                         <input type="hidden" name="filter_status" value="<?= e($filters["status"] ?? "") ?>">
+                        <input type="hidden" name="filter_action" value="<?= e($filters["disciplinary_action"] ?? "") ?>">
                         <input type="hidden" name="filter_data_correction" value="<?= !empty($filters["data_correction_only"]) ? "1" : "" ?>">
                         <input type="hidden" name="filter_escalation" value="<?= !empty($filters["escalation_only"]) ? "1" : "" ?>">
                         <input type="hidden" name="filter_page" value="<?= e($pagination["page"]) ?>">
@@ -248,7 +271,7 @@ $formatCardValue = static function (string $value): string {
                 <?php endif; ?>
 
                 <?php if (((int) ($row["data_correction_offense_count"] ?? 0)) > 0): ?>
-                <span class="dashboard-chip alert"><?= e((string) ($row["data_correction_offense_count"] ?? 0)) ?> DATA CORRECTION<?= ((int) ($row["data_correction_offense_count"] ?? 0)) > 1 ? "S" : "" ?></span>
+                <span class="dashboard-chip alert"><?= e((string) ($row["data_correction_offense_count"] ?? 0)) ?> USER ERROR<?= ((int) ($row["data_correction_offense_count"] ?? 0)) > 1 ? "S" : "" ?></span>
                 <?php endif; ?>
 
                 <?php if ($ticketValue !== ""): ?>

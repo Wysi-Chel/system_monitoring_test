@@ -18,6 +18,7 @@ $filterOptions = [
     "department" => $departmentOptions,
     "module" => $moduleOptions,
     "status" => $summaryStatusOptions,
+    "action" => getMonitoringActionOptions(),
     "per_page" => $monitoringSummaryRowsPerPageOptions,
 ];
 
@@ -143,6 +144,7 @@ function renderMonitoringReadonlyField(string $label, string $value, string $fie
             <input type="hidden" name="dealer" value="<?= e($filters["dealer"] ?? "") ?>">
             <input type="hidden" name="user" value="<?= e($filters["user_name"] ?? "") ?>">
             <input type="hidden" name="status" value="<?= e($filters["status"] ?? "") ?>">
+            <input type="hidden" name="action" value="<?= e($filters["disciplinary_action"] ?? "") ?>">
             <?php if (!empty($filters["data_correction_only"])): ?>
             <input type="hidden" name="data_correction" value="1">
             <?php endif; ?>

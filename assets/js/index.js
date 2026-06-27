@@ -23,40 +23,40 @@
         var ticketInput = document.getElementById("ticket");
         var ticketMonitoringLink = document.getElementById("ticket-monitoring-link");
         var userNameInput = document.getElementById("user-name");
-        var processedTypeInputs = recordForm.querySelectorAll('input[name="processed_type[]"]');
-        var dataCorrectionMessage = "USER is required when PROCESSED TYPE includes DATA CORRECTION.";
+        var classificationInputs = recordForm.querySelectorAll('input[name="classification"]');
+        var userErrorMessage = "USER is required when CLASSIFICATION is USER ERROR.";
 
         applyUppercaseBehavior(recordUppercaseFields);
 
-        if (userNameInput && processedTypeInputs.length > 0) {
-            var updateDataCorrectionValidation = function () {
-                var hasDataCorrection = false;
+        if (userNameInput && classificationInputs.length > 0) {
+            var updateUserErrorValidation = function () {
+                var hasUserError = false;
 
-                for (var inputIndex = 0; inputIndex < processedTypeInputs.length; inputIndex += 1) {
+                for (var inputIndex = 0; inputIndex < classificationInputs.length; inputIndex += 1) {
                     if (
-                        processedTypeInputs[inputIndex].value === "Data Correction"
-                        && processedTypeInputs[inputIndex].checked
+                        classificationInputs[inputIndex].value === "User Error"
+                        && classificationInputs[inputIndex].checked
                     ) {
-                        hasDataCorrection = true;
+                        hasUserError = true;
                         break;
                     }
                 }
 
-                if (hasDataCorrection && !userNameInput.value.trim()) {
-                    userNameInput.setCustomValidity(dataCorrectionMessage);
+                if (hasUserError && !userNameInput.value.trim()) {
+                    userNameInput.setCustomValidity(userErrorMessage);
                     return;
                 }
 
                 userNameInput.setCustomValidity("");
             };
 
-            for (var processedTypeIndex = 0; processedTypeIndex < processedTypeInputs.length; processedTypeIndex += 1) {
-                processedTypeInputs[processedTypeIndex].addEventListener("change", updateDataCorrectionValidation);
+            for (var classificationIndex = 0; classificationIndex < classificationInputs.length; classificationIndex += 1) {
+                classificationInputs[classificationIndex].addEventListener("change", updateUserErrorValidation);
             }
 
-            userNameInput.addEventListener("input", updateDataCorrectionValidation);
-            recordForm.addEventListener("submit", updateDataCorrectionValidation);
-            updateDataCorrectionValidation();
+            userNameInput.addEventListener("input", updateUserErrorValidation);
+            recordForm.addEventListener("submit", updateUserErrorValidation);
+            updateUserErrorValidation();
         }
 
         if (ticketInput && ticketMonitoringLink && ticketMonitoringLink.dataset.baseHref) {

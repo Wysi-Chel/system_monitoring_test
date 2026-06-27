@@ -316,14 +316,14 @@ $identificationNumber = $prefilledIdentificationNumber !== ""
     : getNextMonitoringIdentificationNumber($pdo, $company);
 
 if (
-    containsNormalizedMultiSelectValue($normalizedText["processed_type"], "Data Correction")
+    mb_strtoupper($normalizedText["classification"], 'UTF-8') === mb_strtoupper("User Error", 'UTF-8')
     && $normalizedText["user_name"] === ""
 ) {
     if ($isEditingRecord) {
-        redirectToMonitoringRecordWithError($company, $identificationNumber, "data_correction_user_required");
+        redirectToMonitoringRecordWithError($company, $identificationNumber, "user_error_user_required");
     }
 
-    redirectToMonitoringFormWithError($company, "data_correction_user_required");
+    redirectToMonitoringFormWithError($company, "user_error_user_required");
 }
 $storedIncidentReportRelativePath = null;
 $storedIncidentReportAbsolutePath = null;

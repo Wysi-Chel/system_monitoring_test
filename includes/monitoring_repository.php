@@ -94,6 +94,7 @@ function buildMonitoringFilters(array $input, array $company, array $filterOptio
         "department" => "",
         "module" => "",
         "status" => normalizeAllowedFilter($input["status"] ?? "", $filterOptions["status"] ?? []),
+        "disciplinary_action" => normalizeAllowedFilter($input["action"] ?? $input["disciplinary_action"] ?? "", $filterOptions["action"] ?? []),
         "data_correction_only" => normalizeBooleanFilter($input["data_correction"] ?? ""),
         "escalation_only" => normalizeBooleanFilter($input["escalation"] ?? ""),
         "page" => normalizePositiveInt($input["page"] ?? 1, 1),
@@ -238,8 +239,8 @@ function buildMonitoringWhereClause(array $filters, array &$bindings): string
     }
 
     if (!empty($filters["data_correction_only"])) {
-        $conditions[] = "UPPER(CONCAT(',', REPLACE(COALESCE(processed_type, ''), ', ', ','), ',')) LIKE :data_correction ESCAPE '\\\\'";
-        $bindings["data_correction"] = "%," . strtoupper(escapeLikeTerm("Data Correction")) . ",%";
+        $conditions[] = "UPPER(TRIM(COALESCE(classification, ''))) = :data_correction";
+        $bindings["data_correction"] = uppercaseText("User Error");
     }
 
     return $conditions === [] ? "" : " WHERE " . implode(" AND ", $conditions);
@@ -337,6 +338,44 @@ function fetchMonitoringRecords(
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function filterMonitoringRecordsByDisciplinaryAction(array $records, array $filters): array
+{
+    $selectedAction = trim((string) ($filters["disciplinary_action"] ?? ""));
+    if ($selectedAction === "") {
+        return $records;
+    }
+
+    $selectedActionKey = uppercaseText($selectedAction);
+    $legacyVerbalMemoKey = uppercaseText("Vocal Memo");
+
+    return array_values(array_filter(
+        $records,
+        static function (array $row) use ($selectedActionKey, $legacyVerbalMemoKey): bool {
+            $actionValues = [
+                trim((string) ($row["disciplinary_action"] ?? "")),
+                trim((string) ($row["action_taken"] ?? "")),
+                trim((string) ($row["offense"] ?? "")),
+            ];
+
+            foreach ($actionValues as $actionValue) {
+                if ($actionValue === "") {
+                    continue;
+                }
+
+                $actionKey = uppercaseText($actionValue);
+                if (
+                    $actionKey === $selectedActionKey
+                    || ($selectedActionKey === uppercaseText("Verbal Memo") && $actionKey === $legacyVerbalMemoKey)
+                ) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    ));
+}
+
 function fetchDataCorrectionOffenseNumbersByRecordId(PDO $pdo, string $tableNameSql, array $userNames): array
 {
     $normalizedUserNames = [];
@@ -354,10 +393,9 @@ function fetchDataCorrectionOffenseNumbersByRecordId(PDO $pdo, string $tableName
         return [];
     }
 
-    $processedTypeNeedle = strtoupper(escapeLikeTerm("Data Correction"));
     $placeholders = [];
     $bindings = [
-        ":processed_type" => "%," . $processedTypeNeedle . ",%",
+        ":classification" => uppercaseText("User Error"),
     ];
 
     foreach ($normalizedUserNames as $index => $userName) {
@@ -369,7 +407,7 @@ function fetchDataCorrectionOffenseNumbersByRecordId(PDO $pdo, string $tableName
     $sql = "SELECT id, UPPER(TRIM(user_name)) AS user_key
             FROM {$tableNameSql}
             WHERE COALESCE(TRIM(user_name), '') <> ''
-              AND UPPER(CONCAT(',', REPLACE(COALESCE(processed_type, ''), ', ', ','), ',')) LIKE :processed_type ESCAPE '\\\\'
+              AND UPPER(TRIM(COALESCE(classification, ''))) = :classification
               AND UPPER(TRIM(user_name)) IN (" . implode(", ", $placeholders) . ")
             ORDER BY UPPER(TRIM(user_name)) ASC, id ASC";
 
@@ -417,7 +455,7 @@ function enrichMonitoringRecordsWithDataCorrectionActions(PDO $pdo, string $tabl
             $row["disciplinary_action"] = trim((string) ($row["action_taken"] ?? ""));
         }
 
-        if (!containsMultiValueText((string) ($row["processed_type"] ?? ""), "Data Correction")) {
+        if (uppercaseText(trim((string) ($row["classification"] ?? ""))) !== uppercaseText("User Error")) {
             continue;
         }
 
@@ -431,8 +469,13 @@ function enrichMonitoringRecordsWithDataCorrectionActions(PDO $pdo, string $tabl
             continue;
         }
 
+        $resolvedAction = resolveDataCorrectionDisciplinaryAction($offenseCount);
         $row["data_correction_offense_count"] = $offenseCount;
-        $row["data_correction_alert"] = (string) $offenseCount;
+        $row["data_correction_alert"] = (string) ($resolvedAction["data_correction_alert"] ?? $offenseCount);
+
+        if ($row["disciplinary_action"] === "" && ($resolvedAction["disciplinary_action"] ?? "") !== "") {
+            $row["disciplinary_action"] = (string) $resolvedAction["disciplinary_action"];
+        }
     }
     unset($row);
 

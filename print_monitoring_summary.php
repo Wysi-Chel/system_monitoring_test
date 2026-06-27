@@ -15,6 +15,7 @@ $filterOptions = [
     "department" => $departmentOptions,
     "module" => $moduleOptions,
     "status" => $summaryStatusOptions,
+    "action" => getMonitoringActionOptions(),
     "per_page" => $monitoringSummaryRowsPerPageOptions,
 ];
 $filters = buildMonitoringFilters($_GET, $company, $filterOptions);
@@ -24,6 +25,7 @@ $records = enrichMonitoringRecordsWithDataCorrectionActions($pdo, $tableNameSql,
 if (!empty($filters["escalation_only"])) {
     $records = filterEscalationCandidateMonitoringRecords($records);
 }
+$records = filterMonitoringRecordsByDisciplinaryAction($records, $filters);
 
 $activeFilterBadges = buildActiveFilterBadges($filters, $company["fixed_branch"] ?? null);
 $activeFilterText = $activeFilterBadges !== []

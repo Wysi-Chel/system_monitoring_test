@@ -15,6 +15,7 @@ $filterOptions = [
     "department" => $departmentOptions,
     "module" => $moduleOptions,
     "status" => $summaryStatusOptions,
+    "action" => getMonitoringActionOptions(),
     "per_page" => $monitoringSummaryRowsPerPageOptions,
 ];
 $filters = buildMonitoringFilters($_GET, $company, $filterOptions);
@@ -24,6 +25,7 @@ $records = enrichMonitoringRecordsWithDataCorrectionActions($pdo, $tableNameSql,
 if (!empty($filters["escalation_only"])) {
     $records = filterEscalationCandidateMonitoringRecords($records);
 }
+$records = filterMonitoringRecordsByDisciplinaryAction($records, $filters);
 
 $headers = array_map(
     static fn(string $header): string => uppercaseText($header),
@@ -52,7 +54,7 @@ foreach ($records as $row) {
             continue;
         }
 
-        $rowValues[] = uppercaseText((string) $value);
+        $rowValues[] = uppercaseText(formatSummaryValue($column, $row));
     }
 
     $rows[] = $rowValues;
