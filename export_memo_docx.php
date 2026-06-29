@@ -26,6 +26,13 @@ if ($record === null) {
     exit;
 }
 
+if (!isUserErrorMonitoringRecord($record)) {
+    http_response_code(403);
+    header("Content-Type: text/plain; charset=UTF-8");
+    echo "Memo export is available only for User Error records.";
+    exit;
+}
+
 $record = enrichMonitoringRecordsWithDataCorrectionActions($pdo, $tableNameSql, [$record])[0] ?? $record;
 $filename = buildMemoFilename($company, $record);
 

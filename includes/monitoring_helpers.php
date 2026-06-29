@@ -74,6 +74,22 @@ function splitMultiValueText(?string $value): array
     return array_values(array_unique($items));
 }
 
+function isUserErrorMonitoringRecord(array $row): bool
+{
+    return uppercaseText(trim((string) ($row["classification"] ?? ""))) === uppercaseText("User Error");
+}
+
+function isFinalMemoMonitoringRecord(array $row): bool
+{
+    foreach (["disciplinary_action", "action_taken", "offense"] as $key) {
+        if (uppercaseText(trim((string) ($row[$key] ?? ""))) === uppercaseText("Final Memo")) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 function resolveMonitoringValidationErrorMessage(?string $errorCode): ?string
 {
     return match (trim((string) $errorCode)) {
@@ -474,7 +490,7 @@ function buildActiveFilterBadges(array $filters, ?string $fixedBranch = null): a
 
 function isEscalationCandidateMonitoringRecord(array $row): bool
 {
-    return uppercaseText(trim((string) ($row["classification"] ?? ""))) === uppercaseText("User Error")
+    return isUserErrorMonitoringRecord($row)
         && (int) ($row["data_correction_offense_count"] ?? 0) >= 1;
 }
 

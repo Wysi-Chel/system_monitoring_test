@@ -78,6 +78,11 @@ if ($recordId > 0 && $disciplinaryAction !== "") {
     $record = fetchMonitoringRecordById($pdo, $tableNameSql, $recordId);
 
     if ($record !== null) {
+        if (isFinalMemoMonitoringRecord($record)) {
+            header("Location: index.php?" . http_build_query($redirectParams) . "#summary-section");
+            exit;
+        }
+
         if ($disciplinaryAction === $doneStatus && canMarkMonitoringRecordDone($record["status"] ?? "")) {
             updateMonitoringRecordStatus($pdo, $tableNameSql, $recordId, $doneStatus);
         } elseif (in_array($disciplinaryAction, $allowedActions, true)) {

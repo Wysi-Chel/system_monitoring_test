@@ -70,7 +70,7 @@ function Test-ExcludedRelativePath {
     )
     $excludedExactMatches = @(
         ".app-env"
-    )
+    ) 
 
     if ($excludedExactMatches -contains $normalizedRelativePath) {
         return $true

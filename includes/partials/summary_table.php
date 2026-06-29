@@ -147,6 +147,8 @@ $formatCardValue = static function (string $value): string {
                 $row
             ));
             $identificationNumber = trim((string) ($row["identification_number"] ?? ""));
+            $isUserErrorClassification = isUserErrorMonitoringRecord($row);
+            $hasFinalMemo = isFinalMemoMonitoringRecord($row);
             $recordUrl = $identificationNumber !== ""
                 ? buildUrl("monitoring_record.php", $listQueryParams, ["identification_number" => $identificationNumber])
                 : "";
@@ -156,7 +158,7 @@ $formatCardValue = static function (string $value): string {
                     "edit" => 1,
                 ])
                 : "";
-            $memoRecordUrl = $identificationNumber !== ""
+            $memoRecordUrl = $identificationNumber !== "" && $isUserErrorClassification
                 ? buildUrl("export_memo_docx.php", [
                     "company" => $company["key"],
                     "identification_number" => $identificationNumber,
@@ -185,14 +187,16 @@ $formatCardValue = static function (string $value): string {
                 : trim((string) formatSummaryValue(["key" => "offense", "format" => "text"], $row));
             $rowActionOptions = [];
 
-            if (canMarkMonitoringRecordDone($row["status"] ?? "")) {
-                $rowActionOptions[] = $monitoringDoneStatus;
-            }
+            if (!$hasFinalMemo) {
+                if (canMarkMonitoringRecordDone($row["status"] ?? "")) {
+                    $rowActionOptions[] = $monitoringDoneStatus;
+                }
 
-            if (((int) ($row["data_correction_offense_count"] ?? 0)) >= 1) {
-                foreach ($monitoringActionOptions as $option) {
-                    if (!in_array($option, $rowActionOptions, true)) {
-                        $rowActionOptions[] = $option;
+                if (((int) ($row["data_correction_offense_count"] ?? 0)) >= 1) {
+                    foreach ($monitoringActionOptions as $option) {
+                        if (!in_array($option, $rowActionOptions, true)) {
+                            $rowActionOptions[] = $option;
+                        }
                     }
                 }
             }
@@ -272,6 +276,10 @@ $formatCardValue = static function (string $value): string {
 
                 <?php if (((int) ($row["data_correction_offense_count"] ?? 0)) > 0): ?>
                 <span class="dashboard-chip alert"><?= e((string) ($row["data_correction_offense_count"] ?? 0)) ?> USER ERROR<?= ((int) ($row["data_correction_offense_count"] ?? 0)) > 1 ? "S" : "" ?></span>
+                <?php endif; ?>
+
+                <?php if ($hasFinalMemo): ?>
+                <span class="dashboard-chip final-memo">Final memo issued</span>
                 <?php endif; ?>
 
                 <?php if ($ticketValue !== ""): ?>

@@ -1156,6 +1156,12 @@ button,
     color: #7a4a00;
 }
 
+.dashboard-chip.final-memo {
+    border-color: #b4765a;
+    background: #ffe9df;
+    color: #803719;
+}
+
 .dashboard-chip.ticket {
     border-color: var(--brand);
     background: var(--brand-soft);
@@ -1833,6 +1839,12 @@ html.dark-theme .dashboard-chip.alert {
     border-color: #8c6d2e;
     background: #4a3513;
     color: #ffe2a8;
+}
+
+html.dark-theme .dashboard-chip.final-memo {
+    border-color: #a7664a;
+    background: #4a281c;
+    color: #ffd2c1;
 }
 
 html.dark-theme .summary-action-select option {
@@ -3150,6 +3162,12 @@ body.page-ticket-monitoring textarea {
     font-family: inherit;
 }
 
+body.page-system-monitoring select option,
+body.page-ticket-monitoring select option {
+    background: #ffffff;
+    color: #222222;
+}
+
 html.dark-theme body.page-system-monitoring input,
 html.dark-theme body.page-system-monitoring select,
 html.dark-theme body.page-system-monitoring textarea,
@@ -3157,6 +3175,12 @@ html.dark-theme body.page-ticket-monitoring input,
 html.dark-theme body.page-ticket-monitoring select,
 html.dark-theme body.page-ticket-monitoring textarea {
     background: rgba(255, 255, 255, 0.04);
+}
+
+html.dark-theme body.page-system-monitoring select option,
+html.dark-theme body.page-ticket-monitoring select option {
+    background: #ffffff;
+    color: #111111;
 }
 
 body.page-system-monitoring input::placeholder,
