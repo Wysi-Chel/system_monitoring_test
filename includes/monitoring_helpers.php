@@ -79,15 +79,70 @@ function isUserErrorMonitoringRecord(array $row): bool
     return uppercaseText(trim((string) ($row["classification"] ?? ""))) === uppercaseText("User Error");
 }
 
-function isFinalMemoMonitoringRecord(array $row): bool
+function getIssuedMonitoringMemoAction(array $row): string
 {
-    foreach (["disciplinary_action", "action_taken", "offense"] as $key) {
-        if (uppercaseText(trim((string) ($row[$key] ?? ""))) === uppercaseText("Final Memo")) {
-            return true;
+    $actionValues = [];
+
+    if (array_key_exists("issued_disciplinary_action", $row)) {
+        $actionValues[] = trim((string) ($row["issued_disciplinary_action"] ?? ""));
+    } else {
+        foreach (["disciplinary_action", "action_taken", "offense"] as $key) {
+            $actionValues[] = trim((string) ($row[$key] ?? ""));
         }
     }
 
-    return false;
+    $issuedAction = "";
+    $issuedActionRank = 0;
+    $actionRanks = [
+        uppercaseText("Verbal Memo") => ["label" => "Verbal Memo", "rank" => 1],
+        uppercaseText("Vocal Memo") => ["label" => "Verbal Memo", "rank" => 1],
+        uppercaseText("Written Memo") => ["label" => "Written Memo", "rank" => 2],
+        uppercaseText("Final Memo") => ["label" => "Final Memo", "rank" => 3],
+    ];
+
+    foreach ($actionValues as $actionValue) {
+        $actionKey = uppercaseText($actionValue);
+        if (!isset($actionRanks[$actionKey]) || $actionRanks[$actionKey]["rank"] <= $issuedActionRank) {
+            continue;
+        }
+
+        $issuedAction = $actionRanks[$actionKey]["label"];
+        $issuedActionRank = $actionRanks[$actionKey]["rank"];
+    }
+
+    return $issuedAction;
+}
+
+function isFinalMemoMonitoringRecord(array $row): bool
+{
+    return getIssuedMonitoringMemoAction($row) === "Final Memo";
+}
+
+function getAvailableMonitoringMemoActionOptions(array $row): array
+{
+    if (getIssuedMonitoringMemoAction($row) !== "") {
+        return [];
+    }
+
+    $cycleIssuedAction = trim((string) ($row["memo_cycle_issued_action"] ?? ""));
+
+    return match ($cycleIssuedAction) {
+        "Final Memo" => [],
+        "Written Memo" => ["Final Memo"],
+        "Verbal Memo" => ["Written Memo", "Final Memo"],
+        default => getMonitoringActionOptions(),
+    };
+}
+
+function resolveSuggestedMonitoringMemoAction(array $row, int $count): string
+{
+    $options = getAvailableMonitoringMemoActionOptions($row);
+    if ($options !== []) {
+        return $options[0];
+    }
+
+    $resolvedAction = resolveDataCorrectionDisciplinaryAction($count);
+    return (string) ($resolvedAction["disciplinary_action"] ?? "");
 }
 
 function resolveMonitoringValidationErrorMessage(?string $errorCode): ?string

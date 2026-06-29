@@ -19,6 +19,7 @@ $recordFormSelectedValues = static function (string $key) use ($editingRecord): 
 
     return splitMultiValueText((string) ($editingRecord[$key] ?? ""));
 };
+$userNameSuggestions = isset($userNameSuggestions) && is_array($userNameSuggestions) ? $userNameSuggestions : [];
 ?>
 <section class="<?= e($recordFormSectionClass) ?>" id="encode-section">
     <h2><?= e($recordFormTitle) ?></h2>
@@ -84,7 +85,14 @@ $recordFormSelectedValues = static function (string $key) use ($editingRecord): 
             <div class="field-grid">
                 <div class="field field-span-2">
                     <label for="user-name">User</label>
-                    <input type="text" id="user-name" name="user_name" value="<?= e($recordFormValue("user_name")) ?>">
+                    <input type="text" id="user-name" name="user_name" value="<?= e($recordFormValue("user_name")) ?>"<?= $userNameSuggestions !== [] ? ' list="user-name-suggestions"' : "" ?>>
+                    <?php if ($userNameSuggestions !== []): ?>
+                    <datalist id="user-name-suggestions">
+                        <?php foreach ($userNameSuggestions as $userNameSuggestion): ?>
+                        <option value="<?= e(uppercaseText((string) $userNameSuggestion)) ?>"></option>
+                        <?php endforeach; ?>
+                    </datalist>
+                    <?php endif; ?>
                 </div>
 
                 <div class="field">

@@ -3,6 +3,7 @@ $paginationPages = buildPaginationPages($pagination["page"], $pagination["total_
 $summaryAnchor = "#summary-section";
 $monitoringActionOptions = getMonitoringActionOptions();
 $monitoringDoneStatus = getMonitoringDoneStatus();
+$userNameSuggestions = isset($userNameSuggestions) && is_array($userNameSuggestions) ? $userNameSuggestions : [];
 $formatCardValue = static function (string $value): string {
     $value = trim($value);
     return $value !== "" ? $value : "N/A";
@@ -84,8 +85,16 @@ $formatCardValue = static function (string $value): string {
                     id="filter-user-name"
                     name="user"
                     value="<?= e($filters["user_name"] ?? "") ?>"
+                    <?= $userNameSuggestions !== [] ? 'list="filter-user-name-suggestions"' : "" ?>
                     placeholder=""
                 >
+                <?php if ($userNameSuggestions !== []): ?>
+                <datalist id="filter-user-name-suggestions">
+                    <?php foreach ($userNameSuggestions as $userNameSuggestion): ?>
+                    <option value="<?= e(uppercaseText((string) $userNameSuggestion)) ?>"></option>
+                    <?php endforeach; ?>
+                </datalist>
+                <?php endif; ?>
             </div>
 
             <div class="field">
@@ -186,14 +195,15 @@ $formatCardValue = static function (string $value): string {
                 ? $formattedDisciplinaryAction
                 : trim((string) formatSummaryValue(["key" => "offense", "format" => "text"], $row));
             $rowActionOptions = [];
+            $hasIssuedMemo = getIssuedMonitoringMemoAction($row) !== "";
 
-            if (!$hasFinalMemo) {
+            if (!$hasFinalMemo && !$hasIssuedMemo) {
                 if (canMarkMonitoringRecordDone($row["status"] ?? "")) {
                     $rowActionOptions[] = $monitoringDoneStatus;
                 }
 
                 if (((int) ($row["data_correction_offense_count"] ?? 0)) >= 1) {
-                    foreach ($monitoringActionOptions as $option) {
+                    foreach (getAvailableMonitoringMemoActionOptions($row) as $option) {
                         if (!in_array($option, $rowActionOptions, true)) {
                             $rowActionOptions[] = $option;
                         }

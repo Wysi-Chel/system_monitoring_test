@@ -92,6 +92,7 @@ if ($recordId > 0 && $disciplinaryAction !== "") {
                 $enrichedRecord !== null
                 && uppercaseText(trim((string) ($enrichedRecord["classification"] ?? ""))) === uppercaseText("User Error")
                 && (int) ($enrichedRecord["data_correction_offense_count"] ?? 0) >= 1
+                && in_array($disciplinaryAction, getAvailableMonitoringMemoActionOptions($enrichedRecord), true)
             ) {
                 updateMonitoringRecordActionTaken($pdo, $tableNameSql, $recordId, $disciplinaryAction);
             }

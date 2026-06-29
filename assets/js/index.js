@@ -5,6 +5,74 @@
     var ticketRecordForm = document.getElementById("ticket-record-form");
     var modal = document.getElementById("saved-modal");
     var okButton = document.getElementById("saved-modal-ok");
+    var scrollRestoreKey = "systemMonitoringSummaryScroll";
+
+    var getScrollY = function () {
+        return window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    };
+
+    var saveSummaryScrollPosition = function () {
+        try {
+            window.sessionStorage.setItem(scrollRestoreKey, JSON.stringify({
+                path: window.location.pathname,
+                y: getScrollY(),
+                savedAt: Date.now()
+            }));
+        } catch (error) {
+        }
+    };
+
+    var restoreSummaryScrollPosition = function () {
+        var savedScroll = null;
+
+        try {
+            savedScroll = JSON.parse(window.sessionStorage.getItem(scrollRestoreKey) || "null");
+            window.sessionStorage.removeItem(scrollRestoreKey);
+        } catch (error) {
+            return;
+        }
+
+        if (
+            !savedScroll
+            || savedScroll.path !== window.location.pathname
+            || typeof savedScroll.y !== "number"
+            || Date.now() - savedScroll.savedAt > 60000
+        ) {
+            return;
+        }
+
+        var restore = function () {
+            window.scrollTo(0, savedScroll.y);
+        };
+
+        window.setTimeout(restore, 0);
+        window.setTimeout(restore, 100);
+    };
+
+    var isSummaryActionForm = function (form) {
+        return form && (
+            form.classList.contains("monitoring-action-form")
+            || form.classList.contains("ticket-status-form")
+        );
+    };
+
+    document.addEventListener("change", function (event) {
+        var field = event.target;
+
+        if (!field || !field.form || !isSummaryActionForm(field.form) || field.value === "") {
+            return;
+        }
+
+        saveSummaryScrollPosition();
+    }, true);
+
+    document.addEventListener("submit", function (event) {
+        if (isSummaryActionForm(event.target)) {
+            saveSummaryScrollPosition();
+        }
+    }, true);
+
+    restoreSummaryScrollPosition();
 
     var applyUppercaseBehavior = function (fields) {
         for (var index = 0; index < fields.length; index += 1) {

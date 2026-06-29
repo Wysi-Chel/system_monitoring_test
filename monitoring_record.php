@@ -11,6 +11,7 @@ $fixedBranch = $company["fixed_branch"] ?? null;
 $showBranchSelector = $fixedBranch === null;
 ensureMonitoringTable($pdo, $company);
 $tableNameSql = quoteMysqlIdentifier($company["table_name"]);
+$userNameSuggestions = fetchMonitoringUserNameSuggestions($pdo, $tableNameSql);
 
 $filterOptions = [
     "branch" => $branchOptions,
@@ -73,6 +74,7 @@ $userTransactionRecords = [];
 $userTransactionSummaryUrl = "";
 if ($record !== null && $recordUserName !== "") {
     $userTransactionRecords = fetchMonitoringRecordsByUserName($pdo, $tableNameSql, $recordUserName);
+    $userTransactionRecords = enrichMonitoringRecordsWithDataCorrectionActions($pdo, $tableNameSql, $userTransactionRecords);
     $userTransactionSummaryUrl = buildUrl("index.php", [
         "company" => $company["key"],
         "user" => $recordUserName,
@@ -298,6 +300,9 @@ function renderMonitoringReadonlyField(string $label, string $value, string $fie
                         <th>Amount</th>
                         <th>Processed Type</th>
                         <th>Status</th>
+                        <th>User Error Count</th>
+                        <th>Alert</th>
+                        <th>Issued Action</th>
                         <th>View</th>
                     </tr>
                 </thead>
@@ -313,6 +318,9 @@ function renderMonitoringReadonlyField(string $label, string $value, string $fie
                             ])
                             : "";
                         $isCurrentRecord = $historyRecordId === (int) ($record["id"] ?? 0);
+                        $historyUserErrorCount = (int) ($historyRow["data_correction_offense_count"] ?? 0);
+                        $historyAlertValue = trim((string) ($historyRow["data_correction_alert"] ?? ""));
+                        $historyIssuedAction = getIssuedMonitoringMemoAction($historyRow);
                         ?>
                     <tr<?= $isCurrentRecord ? ' class="record-history-current-row"' : "" ?>>
                         <td><?= e(formatMonitoringDetailDisplayValue(["key" => "date_recorded", "format" => "date"], $historyRow)) ?></td>
@@ -330,6 +338,9 @@ function renderMonitoringReadonlyField(string $label, string $value, string $fie
                         <td><?= e(formatMonitoringDetailDisplayValue(["key" => "amount", "format" => "amount"], $historyRow)) ?></td>
                         <td><?= e(formatMonitoringDetailDisplayValue(["key" => "processed_type", "format" => "text"], $historyRow)) ?></td>
                         <td><?= e(formatMonitoringDetailDisplayValue(["key" => "status", "format" => "text"], $historyRow)) ?></td>
+                        <td><?= e($historyUserErrorCount > 0 ? (string) $historyUserErrorCount : "N/A") ?></td>
+                        <td><?= e($historyAlertValue !== "" ? uppercaseText($historyAlertValue) : "N/A") ?></td>
+                        <td><?= e($historyIssuedAction !== "" ? uppercaseText($historyIssuedAction) : "N/A") ?></td>
                         <td class="record-history-view-cell">
                             <?php if ($isCurrentRecord): ?>
                             <span class="record-history-current-label">Watching</span>
