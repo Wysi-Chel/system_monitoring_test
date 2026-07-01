@@ -302,7 +302,7 @@ function renderMonitoringReadonlyField(string $label, string $value, string $fie
                         <th>Status</th>
                         <th>User Error Count</th>
                         <th>Alert</th>
-                        <th>Issued Action</th>
+                        <th>Memo Status</th>
                         <th>View</th>
                     </tr>
                 </thead>
@@ -320,7 +320,7 @@ function renderMonitoringReadonlyField(string $label, string $value, string $fie
                         $isCurrentRecord = $historyRecordId === (int) ($record["id"] ?? 0);
                         $historyUserErrorCount = (int) ($historyRow["data_correction_offense_count"] ?? 0);
                         $historyAlertValue = trim((string) ($historyRow["data_correction_alert"] ?? ""));
-                        $historyIssuedAction = getIssuedMonitoringMemoAction($historyRow);
+                        $historyMemoStatus = formatMonitoringMemoActionStatusDisplayValue($historyRow);
                         ?>
                     <tr<?= $isCurrentRecord ? ' class="record-history-current-row"' : "" ?>>
                         <td><?= e(formatMonitoringDetailDisplayValue(["key" => "date_recorded", "format" => "date"], $historyRow)) ?></td>
@@ -340,7 +340,7 @@ function renderMonitoringReadonlyField(string $label, string $value, string $fie
                         <td><?= e(formatMonitoringDetailDisplayValue(["key" => "status", "format" => "text"], $historyRow)) ?></td>
                         <td><?= e($historyUserErrorCount > 0 ? (string) $historyUserErrorCount : "N/A") ?></td>
                         <td><?= e($historyAlertValue !== "" ? uppercaseText($historyAlertValue) : "N/A") ?></td>
-                        <td><?= e($historyIssuedAction !== "" ? uppercaseText($historyIssuedAction) : "N/A") ?></td>
+                        <td><?= e($historyMemoStatus !== "" ? uppercaseText($historyMemoStatus) : "N/A") ?></td>
                         <td class="record-history-view-cell">
                             <?php if ($isCurrentRecord): ?>
                             <span class="record-history-current-label">Watching</span>

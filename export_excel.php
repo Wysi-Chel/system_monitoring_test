@@ -40,7 +40,10 @@ foreach ($records as $row) {
         $value = $row[$column["key"]] ?? "";
 
         if (($column["format"] ?? "text") === "action_control") {
-            $rowValues[] = uppercaseText((string) ($row["disciplinary_action"] ?? ""));
+            $memoStatusValue = formatMonitoringMemoActionStatusDisplayValue($row);
+            $rowValues[] = $memoStatusValue !== ""
+                ? uppercaseText($memoStatusValue)
+                : uppercaseText((string) ($row["disciplinary_action"] ?? ""));
             continue;
         }
 

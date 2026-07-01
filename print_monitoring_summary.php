@@ -42,7 +42,10 @@ $printSummaryColumns = array_values(array_filter(
 function formatPrintSummaryValue(array $column, array $row): string
 {
     if (($column["format"] ?? "text") === "action_control") {
-        return uppercaseText(trim((string) ($row["disciplinary_action"] ?? "")));
+        $memoStatusValue = formatMonitoringMemoActionStatusDisplayValue($row);
+        return $memoStatusValue !== ""
+            ? uppercaseText($memoStatusValue)
+            : uppercaseText(trim((string) ($row["disciplinary_action"] ?? "")));
     }
 
     return uppercaseText(formatSummaryValue($column, $row));

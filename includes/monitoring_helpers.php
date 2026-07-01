@@ -79,6 +79,26 @@ function isUserErrorMonitoringRecord(array $row): bool
     return uppercaseText(trim((string) ($row["classification"] ?? ""))) === uppercaseText("User Error");
 }
 
+function normalizeMonitoringMemoAction(string $action): string
+{
+    return match (uppercaseText(trim($action))) {
+        uppercaseText("Verbal Memo"), uppercaseText("Vocal Memo") => "Verbal Memo",
+        uppercaseText("Written Memo") => "Written Memo",
+        uppercaseText("Final Memo") => "Final Memo",
+        default => "",
+    };
+}
+
+function getMonitoringMemoActionRank(string $action): int
+{
+    return match (normalizeMonitoringMemoAction($action)) {
+        "Verbal Memo" => 1,
+        "Written Memo" => 2,
+        "Final Memo" => 3,
+        default => 0,
+    };
+}
+
 function getIssuedMonitoringMemoAction(array $row): string
 {
     $actionValues = [];
@@ -93,24 +113,36 @@ function getIssuedMonitoringMemoAction(array $row): string
 
     $issuedAction = "";
     $issuedActionRank = 0;
-    $actionRanks = [
-        uppercaseText("Verbal Memo") => ["label" => "Verbal Memo", "rank" => 1],
-        uppercaseText("Vocal Memo") => ["label" => "Verbal Memo", "rank" => 1],
-        uppercaseText("Written Memo") => ["label" => "Written Memo", "rank" => 2],
-        uppercaseText("Final Memo") => ["label" => "Final Memo", "rank" => 3],
-    ];
 
     foreach ($actionValues as $actionValue) {
-        $actionKey = uppercaseText($actionValue);
-        if (!isset($actionRanks[$actionKey]) || $actionRanks[$actionKey]["rank"] <= $issuedActionRank) {
+        $memoAction = normalizeMonitoringMemoAction($actionValue);
+        $memoActionRank = getMonitoringMemoActionRank($memoAction);
+        if ($memoAction === "" || $memoActionRank <= $issuedActionRank) {
             continue;
         }
 
-        $issuedAction = $actionRanks[$actionKey]["label"];
-        $issuedActionRank = $actionRanks[$actionKey]["rank"];
+        $issuedAction = $memoAction;
+        $issuedActionRank = $memoActionRank;
     }
 
     return $issuedAction;
+}
+
+function formatMonitoringMemoActionStatusDisplayValue(array $row): string
+{
+    $issuedAction = getIssuedMonitoringMemoAction($row);
+    if ($issuedAction !== "") {
+        return $issuedAction . " - Issued";
+    }
+
+    foreach (["disciplinary_action", "action_taken", "offense"] as $key) {
+        $memoAction = normalizeMonitoringMemoAction((string) ($row[$key] ?? ""));
+        if ($memoAction !== "") {
+            return $memoAction . " - To issue";
+        }
+    }
+
+    return "";
 }
 
 function isFinalMemoMonitoringRecord(array $row): bool
@@ -399,6 +431,13 @@ function formatSummaryValue(array $column, array $row): string
             return formatTicketAgeValue($row);
 
         default:
+            if ($columnKey === "disciplinary_action") {
+                $memoStatusValue = formatMonitoringMemoActionStatusDisplayValue($row);
+                if ($memoStatusValue !== "") {
+                    return uppercaseText($memoStatusValue);
+                }
+            }
+
             $textValue = $columnKey === "processed_type"
                 ? formatMonitoringProcessedTypeDisplayValue($row)
                 : (string) $value;
