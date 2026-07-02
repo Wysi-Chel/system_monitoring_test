@@ -91,10 +91,27 @@
         var ticketInput = document.getElementById("ticket");
         var ticketMonitoringLink = document.getElementById("ticket-monitoring-link");
         var userNameInput = document.getElementById("user-name");
+        var offenseInput = document.getElementById("offense");
+        var pendingStatusInput = recordForm.querySelector('input[name="status[]"][value="Pending"]');
         var classificationInputs = recordForm.querySelectorAll('input[name="classification"]');
         var userErrorMessage = "USER is required when CLASSIFICATION is USER ERROR.";
 
         applyUppercaseBehavior(recordUppercaseFields);
+
+        if (offenseInput && pendingStatusInput && offenseInput.dataset.incidentReportOffense) {
+            var updateIncidentReportStatus = function () {
+                if (
+                    offenseInput.value.trim().toUpperCase() === offenseInput.dataset.incidentReportOffense.trim().toUpperCase()
+                ) {
+                    pendingStatusInput.checked = true;
+                }
+            };
+
+            offenseInput.addEventListener("input", updateIncidentReportStatus);
+            offenseInput.addEventListener("change", updateIncidentReportStatus);
+            recordForm.addEventListener("submit", updateIncidentReportStatus);
+            updateIncidentReportStatus();
+        }
 
         if (userNameInput && classificationInputs.length > 0) {
             var updateUserErrorValidation = function () {

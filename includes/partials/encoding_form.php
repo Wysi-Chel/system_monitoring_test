@@ -45,7 +45,7 @@ $userNameSuggestions = isset($userNameSuggestions) && is_array($userNameSuggesti
                 </div>
 
                 <div class="field date-field">
-                    <label for="transaction-date">Transaction Date</label>
+                    <label for="transaction-date">Transaction date</label>
                     <input type="date" id="transaction-date" name="transaction_date" value="<?= e($recordFormValue("transaction_date")) ?>" required>
                 </div>
             </div>
@@ -96,22 +96,22 @@ $userNameSuggestions = isset($userNameSuggestions) && is_array($userNameSuggesti
                 </div>
 
                 <div class="field">
-                    <label for="identification-number-preview">Identification Number</label>
+                    <label for="identification-number-preview">ID number</label>
                     <input type="text" id="identification-number-preview" value="<?= e($recordFormIdentificationNumber) ?>" readonly>
                 </div>
 
                 <div class="field field-span-2">
-                    <label for="client-name">Client Name</label>
+                    <label for="client-name">Client name</label>
                     <input type="text" id="client-name" name="client_name" value="<?= e($recordFormValue("client_name")) ?>">
                 </div>
 
                 <div class="field">
-                    <label for="invoice-reference">Transaction Reference</label>
+                    <label for="invoice-reference">Transaction reference</label>
                     <input type="text" id="invoice-reference" name="invoice_reference" value="<?= e($recordFormValue("invoice_reference")) ?>">
                 </div>
 
                 <div class="field">
-                    <label for="payment-reference">Payment Reference</label>
+                    <label for="payment-reference">Payment reference</label>
                     <input type="text" id="payment-reference" name="payment_reference" value="<?= e($recordFormValue("payment_reference")) ?>">
                 </div>
 
@@ -138,22 +138,32 @@ $userNameSuggestions = isset($userNameSuggestions) && is_array($userNameSuggesti
                 </div>
 
                 <div class="field">
-                    <label for="system-admin">System Admin</label>
+                    <label for="system-admin">System admin</label>
                     <input type="text" id="system-admin" name="system_admin" value="<?= e($recordFormValue("system_admin")) ?>">
                 </div>
 
                 <div class="field">
                     <label for="offense">Offense</label>
-                    <input type="text" id="offense" name="offense" value="<?= e($recordFormValue("offense")) ?>">
+                    <input
+                        type="text"
+                        id="offense"
+                        name="offense"
+                        value="<?= e($recordFormValue("offense")) ?>"
+                        list="offense-suggestions"
+                        data-incident-report-offense="<?= e(getMonitoringIncidentReportOffense()) ?>"
+                    >
+                    <datalist id="offense-suggestions">
+                        <option value="<?= e(getMonitoringIncidentReportOffense()) ?>"></option>
+                    </datalist>
                 </div>
 
                 <div class="field">
-                    <label>Approved By</label>
+                    <label>Approved by</label>
                     <?php renderOptionButtons("approved_by", $approvedByOptions, false, $recordFormValue("approved_by")); ?>
                 </div>
 
                 <div class="field">
-                    <label>Processed By</label>
+                    <label>Processed by</label>
                     <?php renderOptionButtons("processed_by", $processedByOptions, false, $recordFormValue("processed_by")); ?>
                 </div>
 
@@ -163,7 +173,7 @@ $userNameSuggestions = isset($userNameSuggestions) && is_array($userNameSuggesti
                 </div>
 
                 <div class="field field-span-2">
-                    <label for="incident-report-image">Incident Report Image</label>
+                    <label for="incident-report-image">Incident report image</label>
                     <input type="file" id="incident-report-image" name="incident_report_image" accept=".jpg,.jpeg,.png,.webp,.gif,image/jpeg,image/png,image/webp,image/gif">
                     <?php if ($isEditingRecord && trim((string) ($editingRecord["incident_report_image_path"] ?? "")) !== ""): ?>
                     <p class="note form-field-note">Leave blank to keep the current image.</p>
@@ -180,7 +190,7 @@ $userNameSuggestions = isset($userNameSuggestions) && is_array($userNameSuggesti
                 </div>
 
                 <div class="selector-field selector-field-medium">
-                    <label>Processed Type</label>
+                    <label>Processed type</label>
                     <?php renderOptionButtons("processed_type", $processedTypeOptions, true, $recordFormSelectedValues("processed_type")); ?>
                 </div>
 

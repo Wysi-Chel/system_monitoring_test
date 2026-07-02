@@ -92,6 +92,7 @@ $recordEditUrl = $record !== null
 $recordViewUrl = $record !== null
     ? buildUrl("monitoring_record.php", $recordPageQueryParams, ["edit" => null])
     : "";
+$isResolvedIncidentReport = $record !== null && hasResolvedMonitoringIncidentReportStatus($record);
 $savedTitle = "Record Updated";
 $savedMessage = $identificationNumber !== ""
     ? "Record " . $identificationNumber . " successfully updated."
@@ -157,7 +158,7 @@ function renderMonitoringReadonlyField(string $label, string $value, string $fie
 
             <div class="summary-filter-grid">
                 <div class="field">
-                    <label for="record-identification-number">ID Number</label>
+                    <label for="record-identification-number">ID number</label>
                     <input
                         type="text"
                         id="record-identification-number"
@@ -206,6 +207,12 @@ function renderMonitoringReadonlyField(string $label, string $value, string $fie
             </div>
         </div>
 
+        <?php if (!$isEditMode && $isResolvedIncidentReport): ?>
+        <div class="form-alert form-alert-success record-status-notice" role="status">
+            <?= e(uppercaseText("Incident report resolved")) ?>
+        </div>
+        <?php endif; ?>
+
         <?php if ($isEditMode): ?>
             <?php
             $editingRecord = $record;
@@ -216,8 +223,8 @@ function renderMonitoringReadonlyField(string $label, string $value, string $fie
             <section class="form-section compact-section">
                 <div class="field-grid compact record-top-grid">
                     <?php renderMonitoringReadonlyField("Date", formatMonitoringDetailDisplayValue(["key" => "date_recorded", "format" => "date"], $record)); ?>
-                    <?php renderMonitoringReadonlyField("Transaction Date", formatMonitoringDetailDisplayValue(["key" => "transaction_date", "format" => "date"], $record)); ?>
-                    <?php renderMonitoringReadonlyField("ID Number", formatMonitoringDetailDisplayValue(["key" => "identification_number", "format" => "text"], $record)); ?>
+                    <?php renderMonitoringReadonlyField("Transaction date", formatMonitoringDetailDisplayValue(["key" => "transaction_date", "format" => "date"], $record)); ?>
+                    <?php renderMonitoringReadonlyField("ID number", formatMonitoringDetailDisplayValue(["key" => "identification_number", "format" => "text"], $record)); ?>
                 </div>
             </section>
 
@@ -233,16 +240,16 @@ function renderMonitoringReadonlyField(string $label, string $value, string $fie
             <section class="form-section">
                 <div class="field-grid">
                     <?php renderMonitoringReadonlyField("User", formatMonitoringDetailDisplayValue(["key" => "user_name", "format" => "text"], $record), "field-span-2"); ?>
-                    <?php renderMonitoringReadonlyField("Client Name", formatMonitoringDetailDisplayValue(["key" => "client_name", "format" => "text"], $record), "field-span-2"); ?>
-                    <?php renderMonitoringReadonlyField("Transaction Reference", formatMonitoringDetailDisplayValue(["key" => "invoice_reference", "format" => "text"], $record)); ?>
-                    <?php renderMonitoringReadonlyField("Payment Reference", formatMonitoringDetailDisplayValue(["key" => "payment_reference", "format" => "text"], $record)); ?>
+                    <?php renderMonitoringReadonlyField("Client name", formatMonitoringDetailDisplayValue(["key" => "client_name", "format" => "text"], $record), "field-span-2"); ?>
+                    <?php renderMonitoringReadonlyField("Transaction reference", formatMonitoringDetailDisplayValue(["key" => "invoice_reference", "format" => "text"], $record)); ?>
+                    <?php renderMonitoringReadonlyField("Payment reference", formatMonitoringDetailDisplayValue(["key" => "payment_reference", "format" => "text"], $record)); ?>
                     <?php renderMonitoringReadonlyField("Amount", formatMonitoringDetailDisplayValue(["key" => "amount", "format" => "amount"], $record)); ?>
                     <?php renderMonitoringReadonlyField("Ticket", formatMonitoringDetailDisplayValue(["key" => "ticket", "format" => "text"], $record)); ?>
                     <?php renderMonitoringReadonlyField("Reason", formatMonitoringDetailDisplayValue(["key" => "reason", "format" => "text"], $record), "field-span-2", true); ?>
-                    <?php renderMonitoringReadonlyField("System Admin", formatMonitoringDetailDisplayValue(["key" => "system_admin", "format" => "text"], $record)); ?>
+                    <?php renderMonitoringReadonlyField("System admin", formatMonitoringDetailDisplayValue(["key" => "system_admin", "format" => "text"], $record)); ?>
                     <?php renderMonitoringReadonlyField("Offense", formatMonitoringDetailDisplayValue(["key" => "offense", "format" => "text"], $record)); ?>
-                    <?php renderMonitoringReadonlyField("Approved By", formatMonitoringDetailDisplayValue(["key" => "approved_by", "format" => "text"], $record)); ?>
-                    <?php renderMonitoringReadonlyField("Processed By", formatMonitoringDetailDisplayValue(["key" => "processed_by", "format" => "text"], $record)); ?>
+                    <?php renderMonitoringReadonlyField("Approved by", formatMonitoringDetailDisplayValue(["key" => "approved_by", "format" => "text"], $record)); ?>
+                    <?php renderMonitoringReadonlyField("Processed by", formatMonitoringDetailDisplayValue(["key" => "processed_by", "format" => "text"], $record)); ?>
                     <?php renderMonitoringReadonlyField("Remarks", formatMonitoringDetailDisplayValue(["key" => "remarks", "format" => "text"], $record), "field-span-2", true); ?>
                 </div>
             </section>
@@ -250,11 +257,11 @@ function renderMonitoringReadonlyField(string $label, string $value, string $fie
             <section class="form-section">
                 <div class="field-grid">
                     <?php renderMonitoringReadonlyField("Classification", formatMonitoringDetailDisplayValue(["key" => "classification", "format" => "text"], $record)); ?>
-                    <?php renderMonitoringReadonlyField("Processed Type", formatMonitoringDetailDisplayValue(["key" => "processed_type", "format" => "text"], $record)); ?>
+                    <?php renderMonitoringReadonlyField("Processed type", formatMonitoringDetailDisplayValue(["key" => "processed_type", "format" => "text"], $record)); ?>
                     <?php renderMonitoringReadonlyField("Status", formatMonitoringDetailDisplayValue(["key" => "status", "format" => "text"], $record)); ?>
                     <?php renderMonitoringReadonlyField("Alert", formatMonitoringDetailDisplayValue(["key" => "data_correction_alert", "format" => "text"], $record)); ?>
-                    <?php renderMonitoringReadonlyField("Disciplinary Action", formatMonitoringDetailDisplayValue(["key" => "disciplinary_action", "format" => "text"], $record), "field-span-2"); ?>
-                    <?php renderMonitoringReadonlyField("Encoded At", formatMonitoringDetailDisplayValue(["key" => "created_at", "format" => "timestamp"], $record), "field-span-2"); ?>
+                    <?php renderMonitoringReadonlyField("Disciplinary action", formatMonitoringDetailDisplayValue(["key" => "disciplinary_action", "format" => "text"], $record), "field-span-2"); ?>
+                    <?php renderMonitoringReadonlyField("Encoded at", formatMonitoringDetailDisplayValue(["key" => "created_at", "format" => "timestamp"], $record), "field-span-2"); ?>
                 </div>
             </section>
         </div>

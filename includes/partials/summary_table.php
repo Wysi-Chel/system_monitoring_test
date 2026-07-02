@@ -3,6 +3,7 @@ $paginationPages = buildPaginationPages($pagination["page"], $pagination["total_
 $summaryAnchor = "#summary-section";
 $monitoringActionOptions = getMonitoringActionOptions();
 $monitoringDoneStatus = getMonitoringDoneStatus();
+$monitoringIncidentReportResolvedAction = getMonitoringIncidentReportResolvedAction();
 $userNameSuggestions = isset($userNameSuggestions) && is_array($userNameSuggestions) ? $userNameSuggestions : [];
 $formatCardValue = static function (string $value): string {
     $value = trim($value);
@@ -68,7 +69,7 @@ $formatCardValue = static function (string $value): string {
             </div>
 
             <div class="field">
-                <label for="filter-identification-number">ID Number</label>
+                <label for="filter-identification-number">ID number</label>
                 <input
                     type="text"
                     id="filter-identification-number"
@@ -196,9 +197,10 @@ $formatCardValue = static function (string $value): string {
                 : trim((string) formatSummaryValue(["key" => "offense", "format" => "text"], $row));
             $rowActionOptions = [];
             $hasIssuedMemo = getIssuedMonitoringMemoAction($row) !== "";
+            $showIncidentReportResolveButton = !$hasFinalMemo && hasPendingMonitoringIncidentReportStatus($row);
 
             if (!$hasFinalMemo && !$hasIssuedMemo) {
-                if (canMarkMonitoringRecordDone($row["status"] ?? "")) {
+                if (!$showIncidentReportResolveButton && canMarkMonitoringRecordDone($row["status"] ?? "")) {
                     $rowActionOptions[] = $monitoringDoneStatus;
                 }
 
@@ -238,6 +240,28 @@ $formatCardValue = static function (string $value): string {
                         <?= iconSvg("file-text") ?>
                         <span class="sr-only">Download draft memo</span>
                     </a>
+                    <?php endif; ?>
+                    <?php if ($showIncidentReportResolveButton): ?>
+                    <form action="update_monitoring_action.php" method="POST" class="monitoring-action-form">
+                        <input type="hidden" name="company" value="<?= e($company["key"]) ?>">
+                        <input type="hidden" name="record_id" value="<?= e($row["id"] ?? "") ?>">
+                        <input type="hidden" name="disciplinary_action" value="<?= e($monitoringIncidentReportResolvedAction) ?>">
+                        <input type="hidden" name="filter_month" value="<?= e($filters["month"] ?? "") ?>">
+                        <input type="hidden" name="filter_day" value="<?= e($filters["day"] ?? "") ?>">
+                        <input type="hidden" name="filter_branch" value="<?= e($filters["branch"] ?? "") ?>">
+                        <input type="hidden" name="filter_dealer" value="<?= e($filters["dealer"] ?? "") ?>">
+                        <input type="hidden" name="filter_identification_number" value="<?= e($filters["identification_number"] ?? "") ?>">
+                        <input type="hidden" name="filter_user_name" value="<?= e($filters["user_name"] ?? "") ?>">
+                        <input type="hidden" name="filter_status" value="<?= e($filters["status"] ?? "") ?>">
+                        <input type="hidden" name="filter_action" value="<?= e($filters["disciplinary_action"] ?? "") ?>">
+                        <input type="hidden" name="filter_data_correction" value="<?= !empty($filters["data_correction_only"]) ? "1" : "" ?>">
+                        <input type="hidden" name="filter_escalation" value="<?= !empty($filters["escalation_only"]) ? "1" : "" ?>">
+                        <input type="hidden" name="filter_page" value="<?= e($pagination["page"]) ?>">
+                        <button type="submit" class="secondary icon-button summary-card-edit-link" aria-label="Resolve incident report" title="Resolve incident report">
+                            <?= iconSvg("check") ?>
+                            <span class="sr-only">Resolve incident report</span>
+                        </button>
+                    </form>
                     <?php endif; ?>
                     <?php if ($rowActionOptions !== []): ?>
                     <form action="update_monitoring_action.php" method="POST" class="monitoring-action-form">
@@ -303,23 +327,23 @@ $formatCardValue = static function (string $value): string {
                     <div class="summary-card-value"><?= e($formatCardValue((string) formatSummaryValue(["key" => "department", "format" => "text"], $row))) ?></div>
                 </div>
                 <div class="summary-card-field summary-card-field-client">
-                    <div class="summary-card-label">Client Name</div>
+                    <div class="summary-card-label">Client name</div>
                     <div class="summary-card-value"><?= e($formatCardValue((string) formatSummaryValue(["key" => "client_name", "format" => "text"], $row))) ?></div>
                 </div>
                 <div class="summary-card-field summary-card-field-reference">
-                    <div class="summary-card-label">Transaction Reference</div>
+                    <div class="summary-card-label">Transaction reference</div>
                     <div class="summary-card-value"><?= e($formatCardValue((string) formatSummaryValue(["key" => "invoice_reference", "format" => "text"], $row))) ?></div>
                 </div>
                 <div class="summary-card-field summary-card-field-approved">
-                    <div class="summary-card-label">Approved By</div>
+                    <div class="summary-card-label">Approved by</div>
                     <div class="summary-card-value"><?= e($formatCardValue((string) formatSummaryValue(["key" => "approved_by", "format" => "text"], $row))) ?></div>
                 </div>
                 <div class="summary-card-field summary-card-field-processed">
-                    <div class="summary-card-label">Processed By</div>
+                    <div class="summary-card-label">Processed by</div>
                     <div class="summary-card-value"><?= e($formatCardValue((string) formatSummaryValue(["key" => "processed_by", "format" => "text"], $row))) ?></div>
                 </div>
                 <div class="summary-card-field summary-card-field-alert">
-                    <div class="summary-card-label">Alert / Action</div>
+                    <div class="summary-card-label">Alert / action</div>
                     <div class="summary-card-value"><?= e($formatCardValue($offenseValue)) ?></div>
                 </div>
                 <div class="summary-card-field summary-card-field-reason">

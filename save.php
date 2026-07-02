@@ -3,6 +3,7 @@ require __DIR__ . "/includes/auth.php";
 requireMonitoringAuthentication();
 require "config.php";
 require __DIR__ . "/includes/monitoring_options.php";
+require __DIR__ . "/includes/monitoring_helpers.php";
 
 $company = resolveCompanyConfig($_POST["company"] ?? $_GET["company"] ?? null, $companyConfigs);
 ensureMonitoringTable($pdo, $company);
@@ -290,6 +291,14 @@ foreach ($uppercaseFields as $field) {
 
 $normalizedText["processed_type"] = normalizeMultiSelectInput($_POST["processed_type"] ?? []);
 $normalizedText["status"] = normalizeMultiSelectInput($_POST["status"] ?? []);
+if (
+    uppercaseText($normalizedText["offense"]) === uppercaseText(getMonitoringIncidentReportOffense())
+    && !containsMultiValueText($normalizedText["status"], "Pending")
+) {
+    $statusValues = splitMultiValueText($normalizedText["status"]);
+    $statusValues[] = "Pending";
+    $normalizedText["status"] = implode(", ", $statusValues);
+}
 $incidentReportUpload = normalizeIncidentReportUpload($_FILES["incident_report_image"] ?? null, $company);
 $editRecordId = is_numeric($_POST["record_id"] ?? null) ? (int) $_POST["record_id"] : 0;
 $isEditingRecord = $editRecordId > 0;

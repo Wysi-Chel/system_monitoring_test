@@ -129,7 +129,7 @@ $ticketFormDefaults = [
                     </div>
 
                     <div class="field">
-                        <label for="ticket-number">Ticket Number</label>
+                        <label for="ticket-number">Ticket number</label>
                         <input type="text" id="ticket-number" name="ticket_number" value="<?= e($ticketFormDefaults["ticket_number"]) ?>" required>
                     </div>
 
@@ -144,7 +144,7 @@ $ticketFormDefaults = [
                     </div>
 
                     <div class="field">
-                        <label for="ticket-date-created">Date Created</label>
+                        <label for="ticket-date-created">Date created</label>
                         <input type="date" id="ticket-date-created" name="date_created" value="<?= e($ticketFormDefaults["date_created"]) ?>" required>
                     </div>
 
@@ -154,7 +154,7 @@ $ticketFormDefaults = [
                     </div>
 
                     <div class="field field-span-2 ticket-description-field">
-                        <label for="ticket-description">Description of the Ticket</label>
+                        <label for="ticket-description">Description of the ticket</label>
                         <textarea id="ticket-description" name="ticket_description" required><?= e($ticketFormDefaults["ticket_description"]) ?></textarea>
                     </div>
                 </div>
@@ -189,7 +189,7 @@ $ticketFormDefaults = [
 
             <div class="summary-filter-grid">
                 <div class="field">
-                    <label for="ticket-search">Ticket Search</label>
+                    <label for="ticket-search">Ticket search</label>
                     <input type="search" id="ticket-search" name="q" value="<?= e($filters["search"]) ?>" placeholder="Enter ticket number, module, or description">
                 </div>
 
@@ -333,11 +333,11 @@ $ticketFormDefaults = [
 
                     <div class="summary-card-grid">
                         <div class="summary-card-field">
-                            <div class="summary-card-label">Date Created</div>
+                            <div class="summary-card-label">Date created</div>
                             <div class="summary-card-value"><?= e($dateCreatedValue !== "" ? $dateCreatedValue : "N/A") ?></div>
                         </div>
                         <div class="summary-card-field">
-                            <div class="summary-card-label">Created By</div>
+                            <div class="summary-card-label">Created by</div>
                             <div class="summary-card-value"><?= e($createdByValue !== "" ? $createdByValue : "N/A") ?></div>
                         </div>
                         <div class="summary-card-field">
@@ -353,15 +353,15 @@ $ticketFormDefaults = [
                             <div class="summary-card-value"><?= e($branchValue !== "" ? $branchValue : "N/A") ?></div>
                         </div>
                     <div class="summary-card-field">
-                        <div class="summary-card-label">Ticket Age</div>
+                        <div class="summary-card-label">Ticket age</div>
                         <div class="summary-card-value"><?= e($ticketAgeValue !== "" ? $ticketAgeValue : "N/A") ?></div>
                     </div>
                     <div class="summary-card-field">
-                        <div class="summary-card-label">Date Resolved</div>
+                        <div class="summary-card-label">Date resolved</div>
                         <div class="summary-card-value"><?= e($resolvedValue !== "" ? $resolvedValue : "N/A") ?></div>
                     </div>
                     <div class="summary-card-field">
-                        <div class="summary-card-label">Encoded At</div>
+                        <div class="summary-card-label">Encoded at</div>
                         <div class="summary-card-value"><?= e($encodedAtValue !== "" ? $encodedAtValue : "N/A") ?></div>
                     </div>
                     <div class="summary-card-field summary-card-field-full">

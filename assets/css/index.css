@@ -500,6 +500,8 @@ label {
     color: var(--text-soft);
     font-size: 12px;
     font-weight: bold;
+    letter-spacing: 0;
+    text-transform: none;
 }
 
 input,
@@ -570,6 +572,12 @@ textarea:focus {
     border-color: #d54a4a;
     background: #fdeaea;
     color: #8a1f1f;
+}
+
+.form-alert-success {
+    border-color: var(--success-text);
+    background: var(--success-bg);
+    color: var(--success-text);
 }
 
 .field-grid {
@@ -887,8 +895,8 @@ button,
     color: var(--text-soft);
     font-size: 12px;
     font-weight: bold;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    letter-spacing: 0;
+    text-transform: none;
 }
 
 .dashboard-scope-note {
@@ -939,8 +947,8 @@ button,
     color: var(--text-soft);
     font-size: 12px;
     font-weight: bold;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    letter-spacing: 0;
+    text-transform: none;
 }
 
 .dashboard-metric-value {
@@ -1069,8 +1077,8 @@ button,
     color: var(--text-soft);
     font-size: 12px;
     font-weight: bold;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    letter-spacing: 0;
+    text-transform: none;
 }
 
 .dashboard-ticket-metric strong {
@@ -1288,8 +1296,8 @@ button,
     color: var(--text-soft);
     font-size: 8px;
     font-weight: bold;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    letter-spacing: 0;
+    text-transform: none;
 }
 
 .summary-card-value {
@@ -3146,8 +3154,8 @@ body.page-ticket-monitoring label {
     color: var(--text-soft);
     font-size: 0.82rem;
     font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    letter-spacing: 0;
+    text-transform: none;
 }
 
 body.page-system-monitoring input,
@@ -3648,7 +3656,7 @@ body.page-ticket-monitoring .header-kicker-row {
     body.page-ticket-monitoring .dashboard-ticket-label {
         font-size: 0.68rem;
         line-height: 1.25;
-        letter-spacing: 0.04em;
+        letter-spacing: 0;
         overflow-wrap: anywhere;
     }
 
@@ -3951,7 +3959,7 @@ body.page-ticket-monitoring .header-kicker-row {
     body.page-ticket-monitoring .dashboard-metric-label,
     body.page-system-monitoring .dashboard-ticket-label,
     body.page-ticket-monitoring .dashboard-ticket-label {
-        letter-spacing: 0.05em;
+        letter-spacing: 0;
     }
 
     body.page-system-monitoring .dashboard-breakdown-head,

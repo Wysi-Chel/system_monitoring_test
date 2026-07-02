@@ -42,7 +42,7 @@ $renderDashboardBreakdown = static function (array $items, string $emptyMessage)
     </div>
 
     <div class="dashboard-scope">
-        <div class="dashboard-scope-label">Current Scope</div>
+        <div class="dashboard-scope-label">Current scope</div>
         <?php if ($activeFilterBadges !== []): ?>
         <div class="active-filters dashboard-filter-strip" aria-label="Dashboard scope filters">
             <?php foreach ($activeFilterBadges as $badge): ?>
@@ -58,22 +58,22 @@ $renderDashboardBreakdown = static function (array $items, string $emptyMessage)
 
     <div class="dashboard-metrics-grid">
         <article class="dashboard-metric-card dashboard-metric-total">
-            <div class="dashboard-metric-label">Total Records</div>
+            <div class="dashboard-metric-label">Total records</div>
             <div class="dashboard-metric-value"><?= e(number_format((int) ($dashboardMetrics["total_records"] ?? 0))) ?></div>
         </article>
 
         <a href="<?= e($dashboardUserErrorUrl) ?>" class="dashboard-metric-card dashboard-metric-link dashboard-metric-correction">
-            <div class="dashboard-metric-label">User Error</div>
+            <div class="dashboard-metric-label">User error</div>
             <div class="dashboard-metric-value"><?= e(number_format((int) ($dashboardMetrics["data_correction_records"] ?? 0))) ?></div>
         </a>
 
         <a href="<?= e($dashboardEscalationUrl) ?>" class="dashboard-metric-card dashboard-metric-link dashboard-metric-escalation">
-            <div class="dashboard-metric-label">Action Items</div>
+            <div class="dashboard-metric-label">Action items</div>
             <div class="dashboard-metric-value"><?= e(number_format((int) ($dashboardMetrics["escalation_records"] ?? 0))) ?></div>
         </a>
 
         <article class="dashboard-metric-card dashboard-metric-tickets">
-            <div class="dashboard-metric-label">Linked Tickets</div>
+            <div class="dashboard-metric-label">Linked tickets</div>
             <div class="dashboard-metric-value"><?= e(number_format((int) ($dashboardMetrics["linked_tickets"] ?? 0))) ?></div>
         </article>
     </div>
@@ -100,7 +100,7 @@ $renderDashboardBreakdown = static function (array $items, string $emptyMessage)
 
             <div class="dashboard-ticket-metrics">
                 <div class="dashboard-ticket-metric">
-                    <span class="dashboard-ticket-label">Total Tickets</span>
+                    <span class="dashboard-ticket-label">Total tickets</span>
                     <strong><?= e(number_format((int) ($ticketDashboardData["metrics"]["total_tickets"] ?? 0))) ?></strong>
                 </div>
                     <div class="dashboard-ticket-metric">
@@ -112,7 +112,7 @@ $renderDashboardBreakdown = static function (array $items, string $emptyMessage)
                     <strong><?= e(number_format((int) ($ticketDashboardData["metrics"]["resolved_tickets"] ?? 0))) ?></strong>
                 </div>
                 <div class="dashboard-ticket-metric">
-                    <span class="dashboard-ticket-label">7+ Days Old</span>
+                    <span class="dashboard-ticket-label">7+ days old</span>
                     <strong><?= e(number_format((int) ($ticketDashboardData["metrics"]["aging_tickets"] ?? 0))) ?></strong>
                 </div>
             </div>

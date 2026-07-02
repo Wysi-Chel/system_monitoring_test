@@ -14,6 +14,7 @@ $recordId = is_numeric($_POST["record_id"] ?? null) ? (int) $_POST["record_id"] 
 $disciplinaryAction = trim((string) ($_POST["disciplinary_action"] ?? $_POST["action_taken"] ?? ""));
 $allowedActions = getMonitoringActionOptions();
 $doneStatus = getMonitoringDoneStatus();
+$incidentReportResolvedAction = getMonitoringIncidentReportResolvedAction();
 
 $redirectParams = [
     "company" => $company["key"],
@@ -83,7 +84,14 @@ if ($recordId > 0 && $disciplinaryAction !== "") {
             exit;
         }
 
-        if ($disciplinaryAction === $doneStatus && canMarkMonitoringRecordDone($record["status"] ?? "")) {
+        if ($disciplinaryAction === $incidentReportResolvedAction && hasPendingMonitoringIncidentReportStatus($record)) {
+            updateMonitoringRecordStatus(
+                $pdo,
+                $tableNameSql,
+                $recordId,
+                resolveMonitoringIncidentReportStatus($record["status"] ?? "")
+            );
+        } elseif ($disciplinaryAction === $doneStatus && canMarkMonitoringRecordDone($record["status"] ?? "")) {
             updateMonitoringRecordStatus($pdo, $tableNameSql, $recordId, $doneStatus);
         } elseif (in_array($disciplinaryAction, $allowedActions, true)) {
             $enrichedRecord = enrichMonitoringRecordsWithDataCorrectionActions($pdo, $tableNameSql, [$record])[0] ?? null;

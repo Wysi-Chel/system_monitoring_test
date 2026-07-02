@@ -516,6 +516,16 @@ function getMonitoringActionOptions(): array
     return ["Verbal Memo", "Written Memo", "Final Memo"];
 }
 
+function getMonitoringIncidentReportOffense(): string
+{
+    return "Incident Report";
+}
+
+function getMonitoringIncidentReportResolvedAction(): string
+{
+    return "Resolved";
+}
+
 function getMonitoringDoneStatus(): string
 {
     return "Done";
@@ -524,6 +534,58 @@ function getMonitoringDoneStatus(): string
 function canMarkMonitoringRecordDone(?string $status): bool
 {
     return uppercaseText(trim((string) $status)) === uppercaseText("Pending");
+}
+
+function isMonitoringIncidentReportRecord(array $row): bool
+{
+    return uppercaseText(trim((string) ($row["offense"] ?? ""))) === uppercaseText(getMonitoringIncidentReportOffense());
+}
+
+function hasPendingMonitoringIncidentReportStatus(array $row): bool
+{
+    return isMonitoringIncidentReportRecord($row)
+        && containsMultiValueText((string) ($row["status"] ?? ""), "Pending");
+}
+
+function hasResolvedMonitoringIncidentReportStatus(array $row): bool
+{
+    return isMonitoringIncidentReportRecord($row)
+        && containsMultiValueText((string) ($row["status"] ?? ""), getMonitoringDoneStatus());
+}
+
+function resolveMonitoringIncidentReportStatus(?string $status): string
+{
+    $statusValues = splitMultiValueText($status);
+    if ($statusValues === []) {
+        return getMonitoringDoneStatus();
+    }
+
+    $resolvedValues = [];
+    $doneStatus = getMonitoringDoneStatus();
+    $hasDoneStatus = false;
+
+    foreach ($statusValues as $statusValue) {
+        if (uppercaseText($statusValue) === uppercaseText($doneStatus)) {
+            $hasDoneStatus = true;
+            break;
+        }
+    }
+
+    foreach ($statusValues as $statusValue) {
+        if (uppercaseText($statusValue) === uppercaseText("Pending")) {
+            if (!$hasDoneStatus) {
+                $resolvedValues[] = $doneStatus;
+                $hasDoneStatus = true;
+            }
+            continue;
+        }
+
+        if (!containsMultiValueText(implode(", ", $resolvedValues), $statusValue)) {
+            $resolvedValues[] = $statusValue;
+        }
+    }
+
+    return implode(", ", $resolvedValues);
 }
 
 function getSummaryHeaders(array $summaryColumns): array
