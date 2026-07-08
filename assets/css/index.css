@@ -1341,7 +1341,8 @@ button,
 }
 
 .summary-card-monitoring .monitoring-action-form,
-.summary-card-ticket .ticket-status-form {
+.summary-card-ticket .ticket-status-form,
+.summary-card-ticket .ticket-delete-form {
     margin: 0;
     display: flex;
 }
@@ -1489,6 +1490,37 @@ button,
 .ticket-status-form {
     margin: 0;
     display: inline-block;
+}
+
+.ticket-delete-form {
+    margin: 0;
+    display: inline-flex;
+}
+
+.ticket-delete-button {
+    border-color: #d15b5b;
+    background: #fff1f1;
+    color: #9f2323;
+}
+
+.ticket-delete-button:hover,
+.ticket-delete-button:focus {
+    border-color: #9f2323;
+    background: #f7dada;
+    color: #7a1515;
+}
+
+html.dark-theme .ticket-delete-button {
+    border-color: #8f4b55;
+    background: #3a2024;
+    color: #f3b7bf;
+}
+
+html.dark-theme .ticket-delete-button:hover,
+html.dark-theme .ticket-delete-button:focus {
+    border-color: #bf6b76;
+    background: #4a252b;
+    color: #ffdce1;
 }
 
 .ticket-status-select {

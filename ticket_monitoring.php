@@ -15,6 +15,22 @@ if (!companySupportsTicketMonitoring($company)) {
 $fixedBranch = $company["fixed_branch"] ?? null;
 $showBranchSelector = $fixedBranch === null;
 ensureTicketMonitoringTable($pdo, $company);
+$ticketEncodeDealerOptions = array_values(array_filter(
+    $dealerOptions,
+    static function (string $dealer) use ($company): bool {
+        $companyKey = strtolower(trim((string) ($company["key"] ?? "")));
+
+        if ($companyKey === "mitsubishi" && $dealer === "NGSC") {
+            return false;
+        }
+
+        if ($companyKey === "hyundai") {
+            return $dealer === "NGSC";
+        }
+
+        return true;
+    }
+));
 
 $filterOptions = [
     "branch" => $branchOptions,
@@ -48,14 +64,18 @@ $headerTitle = "Ticket Monitoring";
 $showCompanySwitch = true;
 $paginationPages = buildPaginationPages($pagination["page"], $pagination["total_pages"]);
 $savedTicketNumber = trim((string) ($_GET["ticket_number"] ?? ""));
-$savedTitle = isset($_GET["updated"]) ? "Ticket Updated" : "Ticket Saved";
-$savedMessage = isset($_GET["updated"])
-    ? "Ticket status successfully updated."
-    : ($savedTicketNumber !== ""
-        ? "Ticket " . $savedTicketNumber . " successfully saved to the " . $company["ticket_table_name"] . " table."
-        : "Ticket monitoring record successfully saved to the " . $company["ticket_table_name"] . " table.");
+$savedTitle = isset($_GET["deleted"])
+    ? "Ticket Deleted"
+    : (isset($_GET["updated"]) ? "Ticket Updated" : "Ticket Saved");
+$savedMessage = isset($_GET["deleted"])
+    ? "Ticket monitoring record successfully deleted from the " . $company["ticket_table_name"] . " table."
+    : (isset($_GET["updated"])
+        ? "Ticket status successfully updated."
+        : ($savedTicketNumber !== ""
+            ? "Ticket " . $savedTicketNumber . " successfully saved to the " . $company["ticket_table_name"] . " table."
+            : "Ticket monitoring record successfully saved to the " . $company["ticket_table_name"] . " table."));
 $ticketFormDefaults = [
-    "dealer" => "",
+    "dealer" => strtolower(trim((string) ($company["key"] ?? ""))) === "hyundai" ? "NGSC" : "",
     "module" => "",
     "ticket_number" => trim((string) ($_GET["ticket_number"] ?? $_GET["q"] ?? "")),
     "ticket_description" => "",
@@ -122,7 +142,7 @@ $ticketFormDefaults = [
                         <label for="ticket-form-dealer">Dealers</label>
                         <select id="ticket-form-dealer" name="dealer" required>
                             <option value="">Select dealer</option>
-                            <?php foreach ($dealerOptions as $option): ?>
+                            <?php foreach ($ticketEncodeDealerOptions as $option): ?>
                             <option value="<?= e($option) ?>"<?= $ticketFormDefaults["dealer"] === $option ? " selected" : "" ?>><?= e($option) ?></option>
                             <?php endforeach; ?>
                         </select>
@@ -319,6 +339,20 @@ $ticketFormDefaults = [
                             </select>
                         </form>
                         <?php endif; ?>
+                        <form action="delete_ticket_monitoring.php" method="POST" class="ticket-delete-form" data-ticket-number="<?= e($ticketNumber !== "" ? $ticketNumber : "this ticket") ?>">
+                            <input type="hidden" name="company" value="<?= e($company["key"]) ?>">
+                            <input type="hidden" name="ticket_id" value="<?= e($row["id"] ?? "") ?>">
+                            <input type="hidden" name="filter_search" value="<?= e($filters["search"]) ?>">
+                            <input type="hidden" name="filter_branch" value="<?= e($filters["branch"]) ?>">
+                            <input type="hidden" name="filter_dealer" value="<?= e($filters["dealer"] ?? "") ?>">
+                            <input type="hidden" name="filter_status" value="<?= e($filters["ticket_status"]) ?>">
+                            <input type="hidden" name="filter_per_page" value="<?= e($filters["per_page"]) ?>">
+                            <input type="hidden" name="filter_page" value="<?= e($pagination["page"]) ?>">
+                            <button type="submit" class="ticket-delete-button icon-button" aria-label="Delete ticket record" title="Delete ticket record">
+                                <?= iconSvg("trash") ?>
+                                <span class="sr-only">Delete ticket record</span>
+                            </button>
+                        </form>
                     </div>
                 </div>
 

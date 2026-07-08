@@ -53,6 +53,7 @@
         return form && (
             form.classList.contains("monitoring-action-form")
             || form.classList.contains("ticket-status-form")
+            || form.classList.contains("ticket-delete-form")
         );
     };
 
@@ -67,6 +68,14 @@
     }, true);
 
     document.addEventListener("submit", function (event) {
+        if (event.target && event.target.classList.contains("ticket-delete-form")) {
+            var ticketNumber = event.target.getAttribute("data-ticket-number") || "this ticket";
+            if (!window.confirm("Delete " + ticketNumber + "? This cannot be undone.")) {
+                event.preventDefault();
+                return;
+            }
+        }
+
         if (isSummaryActionForm(event.target)) {
             saveSummaryScrollPosition();
         }
@@ -239,7 +248,7 @@
 
         if (window.history && typeof window.history.replaceState === "function" && typeof URL === "function") {
             var url = new URL(window.location.href);
-            var successParams = ["saved", "updated", "identification_number", "ticket_number"];
+            var successParams = ["saved", "updated", "deleted", "identification_number", "ticket_number"];
             for (var index = 0; index < successParams.length; index += 1) {
                 url.searchParams.delete(successParams[index]);
             }

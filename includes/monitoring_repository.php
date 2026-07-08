@@ -707,3 +707,10 @@ function updateTicketMonitoringRecordStatus(PDO $pdo, string $tableNameSql, int 
     $stmt->bindValue(":id", $id, PDO::PARAM_INT);
     $stmt->execute();
 }
+
+function deleteTicketMonitoringRecord(PDO $pdo, string $tableNameSql, int $id): void
+{
+    $stmt = $pdo->prepare("DELETE FROM {$tableNameSql} WHERE id = :id LIMIT 1");
+    $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+    $stmt->execute();
+}
